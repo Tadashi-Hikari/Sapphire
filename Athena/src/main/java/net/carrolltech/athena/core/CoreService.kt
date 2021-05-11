@@ -11,6 +11,10 @@ import androidx.core.app.NotificationCompat
 import net.carrolltech.athena.R
 import java.util.*
 
+/**
+ * For right now, this isn't even used by Athena. Android bypasses it completely
+ */
+
 class CoreService: SapphireCoreService(){
 	//State variables
 	var initialized = false
@@ -20,18 +24,9 @@ class CoreService: SapphireCoreService(){
 
 	// and this. Though this is kind of a 'fake' connection
 	var connection = Connection()
-	private lateinit var notificationManager: NotificationManager
-	private val CHANNEL_ID = "SAF"
-	private val NAME = "Sapphire Assistant Framework"
-	private val SERVICE_TEXT = "Sapphire Assistant Framework"
 
 	// This holds the available modules. It's close to a registry, and I hate everything about it
 	var pendingIntentLedger = mutableMapOf<String,PendingIntent>()
-
-	override fun onCreate() {
-		super.onCreate()
-		buildForegroundNotification()
-	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		//var passedIntent = cleanRoute(intent!!)
@@ -43,28 +38,6 @@ class CoreService: SapphireCoreService(){
 		startService(intent)
 		// This may need to be moved, if I am to do things in the background
 		return super.onStartCommand(intent, flags, startId)
-	}
-
-	fun buildForegroundNotification() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			val importance = NotificationManager.IMPORTANCE_HIGH
-			val channel = NotificationChannel(CHANNEL_ID, NAME, importance).apply {
-				description = SERVICE_TEXT
-			}
-
-			notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-			notificationManager.createNotificationChannel(channel)
-		}
-
-		var notification = NotificationCompat.Builder(this, CHANNEL_ID)
-			//.setSmallIcon(R.drawable.assistant)
-			.setContentTitle("Sapphire Assistant")
-			.setContentText("Thank you for trying out the Sapphire Framework")
-			.setOngoing(true)
-			.setPriority(NotificationCompat.PRIORITY_HIGH)
-			.build()
-
-		startForeground(1337, notification)
 	}
 
 	// What is the nervous systems function called
@@ -131,7 +104,6 @@ class CoreService: SapphireCoreService(){
 	}
 
 	override fun onDestroy() {
-		notificationManager.cancel(1337)
 		super.onDestroy()
 	}
 

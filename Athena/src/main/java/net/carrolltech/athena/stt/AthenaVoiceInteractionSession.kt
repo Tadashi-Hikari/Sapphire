@@ -4,6 +4,11 @@ import android.content.Context
 import android.service.voice.VoiceInteractionSession
 import android.util.Log
 
+/**
+ * This interacts w/ the user and the app itself, using the Android designs.
+ * The context is passed to it via whatever application called it
+ */
+
 class AthenaVoiceInteractionSession(context: Context): VoiceInteractionSession(context){
     override fun onCreate() {
         super.onCreate()

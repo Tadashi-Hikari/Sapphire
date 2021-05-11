@@ -1,6 +1,7 @@
 package net.carrolltech.athena.stt
 
 import android.content.Intent
+import android.os.Bundle
 import android.service.voice.VoiceInteractionService
 import android.util.Log
 import android.widget.Toast
@@ -22,6 +23,7 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action){
+            // This is started by the system?
             "android.service.voice.VoiceInteractionService" -> Log.v(this.javaClass.name,intent.toString())
             else -> Log.v(this.javaClass.name,"Something something something")
         }
@@ -51,8 +53,10 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
     // This will pass a result while running, No need to start or stop the recognizer
     override fun onResult(hypothesis: String) {
         var jsonUtterance = JSONObject(hypothesis)
-        if("test" in jsonUtterance.getString("text")) {
-            Log.v(this.javaClass.name, "Athena hears your prayers")
+        if("mega man" in jsonUtterance.getString("text")) {
+            Log.v(this.javaClass.name, "What can I do for you Lan")
+            var intent = Intent().setClassName(this,"${packageName}.stt.AthenaVoiceInteractionSessionService")
+            startService(intent)
         }
     }
 
