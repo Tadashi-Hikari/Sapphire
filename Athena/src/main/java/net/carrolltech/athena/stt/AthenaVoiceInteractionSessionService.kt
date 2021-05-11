@@ -18,8 +18,9 @@ import java.io.File
  */
 
 class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractionSessionService(){
-
     private lateinit var recognizer: CustomSpeechRecognizer
+
+    val MESSAGE="assistant.framework.protocol.MESSAGE"
 
     // This will initialize the full recognizer in the background, waiting for the user to say "Athena
     override fun onCreate() {
@@ -35,9 +36,9 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
         return super.onStartCommand(intent, flags, startId)
     }
 
+    // I don't need to start here, because it's started w/ onStartCommand
     override fun onNewSession(args: Bundle?): AthenaVoiceInteractionSession {
         Log.d(this.javaClass.name, "Creating a new session")
-        recognizer.startListening()
         return AthenaVoiceInteractionSession(this)
     }
 
@@ -64,13 +65,12 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
     override fun onResult(hypothesis: String) {
         var hypothesisJson = JSONObject(hypothesis)
         recognizer.stop()
-        Log.i(this.javaClass.name, "Result: ${hypothesisJson.getString("text")}")
-        if(hypothesisJson.getString("text") != ""){
-            var processIntent = Intent().setClassName(this,"${packageName}.processor.ProcessorCentralService")
-            processIntent.putExtra("MESSAGE",hypothesisJson.getString("text"))
+        if(hypothesisJson.getString("text").isNotBlank()){
+            Log.i(this.javaClass.simpleName, "Result: ${hypothesisJson.getString("text")}")
+            var processIntent = Intent().setClassName(this,"${packageName}.processor.ProcessorService")
+            processIntent.putExtra(MESSAGE,hypothesisJson.getString("text"))
             startService(processIntent)
         }
-
     }
 
     override fun onTimeout() {

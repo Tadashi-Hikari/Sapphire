@@ -9,14 +9,11 @@ import java.lang.Exception
 import java.util.*
 
 class ProcessorTrainingService: SapphireFrameworkService(){
-    override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
-    }
+    var INITIALIZE = "action.athena.skill.INITIALIZE"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try{
             Log.v("ProcessorTrainingService started")
-            //test()
             train(intent)
         }catch(exception: Exception){
             exception.printStackTrace()
@@ -27,13 +24,14 @@ class ProcessorTrainingService: SapphireFrameworkService(){
     }
 
 
+    // Hmmm... Too hardcoded?
     var DIALOG = "dialog"
     var INTENT = "intent"
     var ENTITY = "entity"
 
     fun getAssetFiles(type: String): List<String>{
         // This will exist in *every* Athena skill
-        var intent = Intent().setAction("action.athena.skill.INITIALIZE")
+        var intent = Intent().setAction(INITIALIZE)
         var filenames = mutableListOf<String>()
         // Get all of Athena's skills
         Log.v("Querying packages")
@@ -103,7 +101,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
             saveClassifier(classifier)
 
             // Return to the main Processor portion
-            var intent = Intent().setClassName(this,"net.carrolltech.athena.processor.ProcessorCentralService")
+            var intent = Intent().setClassName(this,"net.carrolltech.athena.processor.ProcessorService")
             startService(intent)
         } catch (exception: Exception){
             exception.printStackTrace()
@@ -139,7 +137,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
     }
 
     fun saveClassifier(classifier: ColumnDataClassifier){
-        val fileName = File(this.filesDir,"Intent.classifier")
+        val fileName = File(this.filesDir,"intent.classifier")
         classifier.serializeClassifier(fileName.canonicalPath)
     }
 

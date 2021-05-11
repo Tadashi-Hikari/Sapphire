@@ -17,7 +17,6 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
         super.onReady()
         System.loadLibrary("kaldi_jni");
         setup()
-        Toast.makeText(this,"Testing!",Toast.LENGTH_LONG)
         Log.v(this.javaClass.name, "Ready to go")
     }
 
@@ -53,6 +52,7 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
     // This will pass a result while running, No need to start or stop the recognizer
     override fun onResult(hypothesis: String) {
         var jsonUtterance = JSONObject(hypothesis)
+        // Maybe I want to move this to onPartialResult, so it starts listening right away
         if("mega man" in jsonUtterance.getString("text")) {
             Log.v(this.javaClass.name, "What can I do for you Lan")
             var intent = Intent().setClassName(this,"${packageName}.stt.AthenaVoiceInteractionSessionService")

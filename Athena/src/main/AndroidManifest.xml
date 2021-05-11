@@ -35,7 +35,7 @@
         </activity>
 
         <service
-            android:name=".processor.ProcessorCentralService"
+            android:name=".processor.ProcessorService"
             android:process=":ProcessorCentralService">
         </service>
         <service
