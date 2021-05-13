@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<voice-interaction-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sessionService="net.carrolltech.athena.stt.AthenaInteractionSessionService"
+    android:recognitionService="net.carrolltech.athena.stt.KaldiService"
+    android:settingsActivity="net.carrolltech.athena.ui.MainActivity"
+    android:supportsAssist="true" />
