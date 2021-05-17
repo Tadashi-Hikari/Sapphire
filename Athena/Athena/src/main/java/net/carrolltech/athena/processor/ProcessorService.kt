@@ -12,7 +12,6 @@ class ProcessorService: SapphireFrameworkService(){
         try{
             Log.v("ProcessorCentralService started")
             when {
-                intent!!.action == "DELETE_CLASSIFIER" -> deleteClassifier()
                 else -> process(intent)
             }
         }catch (exception: Exception){
@@ -28,7 +27,9 @@ class ProcessorService: SapphireFrameworkService(){
         var outgoingIntent = Intent()
 
         try{
-            if(utterance != ""){
+            if(utterance == "delete") {
+                deleteClassifier()
+            }else if(utterance != ""){
                 Log.i("Loading the classifier")
                 var classifier = loadClassifier()
                 if(classifier != null) {
@@ -56,6 +57,16 @@ class ProcessorService: SapphireFrameworkService(){
         }catch(exception: Exception){
             Log.e("There was an error trying to process the text")
         }
+    }
+
+    fun checkRegex(){
+
+    }
+
+    // This should be called *after* the classification? Although, the entities could cut across skills....
+    // This could also be done independantly.....
+    fun findEntities(utterance: String, category: String){
+
     }
 
     fun loadClassifier(): ColumnDataClassifier?{

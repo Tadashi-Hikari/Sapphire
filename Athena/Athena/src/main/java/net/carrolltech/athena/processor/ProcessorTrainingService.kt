@@ -145,12 +145,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
     fun createProperties(): Properties{
         var properties = Properties()
         properties.setProperty("goldAnswerColumn","0")
-        properties.setProperty("useNB","true")
-        //props.setProperty("useClass","true")
-        properties.setProperty("useClassFeature","true")
-        //props.setProperty("1.splitWordsRegexp","false")
-        //props.setProperty("1.splitWordsTokenizerRegexp","false")
-        properties.setProperty("1.splitWordsWithPTBTokenizer","true")
+        props.setProperty("1.splitWordsRegexp"," ")
         // This is the line that was missing
         properties.setProperty("1.useSplitWords","true")
         return properties

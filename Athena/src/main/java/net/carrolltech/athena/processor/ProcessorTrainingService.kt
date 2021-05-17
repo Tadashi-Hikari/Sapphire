@@ -42,6 +42,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
             var packageResources = this.packageManager.getResourcesForApplication(packageName)
             var assetsStuff = packageResources.assets
             for(filename in assetsStuff.list("")!!){
+                Log.v("File to check: ${filename}")
                 if(filename.endsWith(type)){
                     var inputStream = assetsStuff.open(filename)
                     filenames.add(convertAssetToFile(inputStream, filename))
@@ -145,12 +146,12 @@ class ProcessorTrainingService: SapphireFrameworkService(){
     fun createProperties(): Properties{
         var properties = Properties()
         properties.setProperty("goldAnswerColumn","0")
-        properties.setProperty("useNB","true")
+        //properties.setProperty("useNB","true")
         //props.setProperty("useClass","true")
-        properties.setProperty("useClassFeature","true")
-        //props.setProperty("1.splitWordsRegexp","false")
+        //properties.setProperty("useClassFeature","true")
+        properties.setProperty("1.splitWordsRegexp"," ")
         //props.setProperty("1.splitWordsTokenizerRegexp","false")
-        properties.setProperty("1.splitWordsWithPTBTokenizer","true")
+        //properties.setProperty("1.splitWordsWithPTBTokenizer","true")
         // This is the line that was missing
         properties.setProperty("1.useSplitWords","true")
         return properties

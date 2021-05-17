@@ -1,9 +1,7 @@
 package net.carrolltech.athena.processor
 
 import android.content.Intent
-import android.os.IBinder
 import edu.stanford.nlp.classify.ColumnDataClassifier
-import net.carrolltech.athena.R
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.File
 
@@ -12,7 +10,6 @@ class ProcessorService: SapphireFrameworkService(){
         try{
             Log.v("ProcessorCentralService started")
             when {
-                intent!!.action == "DELETE_CLASSIFIER" -> deleteClassifier()
                 else -> process(intent)
             }
         }catch (exception: Exception){
@@ -28,7 +25,9 @@ class ProcessorService: SapphireFrameworkService(){
         var outgoingIntent = Intent()
 
         try{
-            if(utterance != ""){
+            if(utterance == "delete"){
+                deleteClassifier()
+            }else if(utterance != ""){
                 Log.i("Loading the classifier")
                 var classifier = loadClassifier()
                 if(classifier != null) {
@@ -39,7 +38,7 @@ class ProcessorService: SapphireFrameworkService(){
                     var classifiedScores = classifier.scoresOf(datumToClassify)
                     Log.v("Datum classification: ${classifiedDatum}")
                     // This is an arbitrary number, and should probably be a configurable variable
-                    if (classifiedScores.getCount(classifiedDatum) >= .04) {
+                    if (classifiedScores.getCount(classifiedDatum) >= .6) {
                         Log.i("Text matches class ${classifiedDatum}")
                         outgoingIntent.putExtra(ROUTE, classifiedDatum)
                     } else {
