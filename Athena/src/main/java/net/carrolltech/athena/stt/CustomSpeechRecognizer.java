@@ -5,6 +5,7 @@ package net.carrolltech.athena.stt;
  **/
 
 import android.media.AudioRecord;
+import android.media.audiofx.NoiseSuppressor;
 import android.os.Handler;
 import android.os.Looper;
 import org.kaldi.KaldiRecognizer;
@@ -31,6 +32,10 @@ public class CustomSpeechRecognizer {
         this.sampleRate = 16000;
         this.bufferSize = Math.round((float)this.sampleRate * 0.4F);
         this.recorder = new AudioRecord(6, this.sampleRate, 16, 2, this.bufferSize * 2);
+        // This is added by me (Hikari Tadashi), trying to use noise suppression to increase recognition
+        int audioSessionId = recorder.getAudioSessionId();
+        NoiseSuppressor.create(audioSessionId);
+
         if (this.recorder.getState() == 0) {
             this.recorder.release();
             throw new IOException("Failed to initialize recorder. Microphone might be already in use.");
@@ -42,6 +47,10 @@ public class CustomSpeechRecognizer {
         this.sampleRate = 16000;
         this.bufferSize = Math.round((float)this.sampleRate * 0.4F);
         this.recorder = new AudioRecord(6, this.sampleRate, 16, 2, this.bufferSize * 2);
+        // This is added by me (Hikari Tadashi), trying to use noise suppression to increase recognition
+        int audioSessionId = recorder.getAudioSessionId();
+        NoiseSuppressor.create(audioSessionId);
+
         if (this.recorder.getState() == 0) {
             this.recorder.release();
             throw new IOException("Failed to initialize recorder. Microphone might be already in use.");
