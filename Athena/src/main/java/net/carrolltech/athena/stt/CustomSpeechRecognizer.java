@@ -23,6 +23,8 @@ public class CustomSpeechRecognizer {
     private int bufferSize;
     private final AudioRecord recorder;
     private Thread recognizerThread;
+    private NoiseSuppressor noiseSuppressor;
+    private NoiseSuppressor hotwordNoiseSuppressor;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Collection<RecognitionListener> listeners = new HashSet();
 
@@ -34,7 +36,7 @@ public class CustomSpeechRecognizer {
         this.recorder = new AudioRecord(6, this.sampleRate, 16, 2, this.bufferSize * 2);
         // This is added by me (Hikari Tadashi), trying to use noise suppression to increase recognition
         int audioSessionId = recorder.getAudioSessionId();
-        NoiseSuppressor.create(audioSessionId);
+        noiseSuppressor = NoiseSuppressor.create(audioSessionId);
 
         if (this.recorder.getState() == 0) {
             this.recorder.release();
@@ -49,7 +51,7 @@ public class CustomSpeechRecognizer {
         this.recorder = new AudioRecord(6, this.sampleRate, 16, 2, this.bufferSize * 2);
         // This is added by me (Hikari Tadashi), trying to use noise suppression to increase recognition
         int audioSessionId = recorder.getAudioSessionId();
-        NoiseSuppressor.create(audioSessionId);
+        hotwordNoiseSuppressor = NoiseSuppressor.create(audioSessionId);
 
         if (this.recorder.getState() == 0) {
             this.recorder.release();

@@ -22,6 +22,51 @@ class ProcessorTrainingService: SapphireFrameworkService(){
         return super.onStartCommand(intent, flags, startId)
     }
 
+    fun entityPipeline(): List<String>{
+        // I need the confidence, and I need the token/location?
+        var tokens = emptyList<String>()
+        var enitity = mutableListOf<String>()
+
+        // Each one of these returns a list
+        regexEntity()
+        checkForKnownEntity()
+        checkForWildcardEntity()
+
+        // This does the combination
+        for(index in tokens){
+            if(index != "0") {
+                var max = getMax(1, 2, 3)
+                when (max) {
+                    1 -> enitity.add("1")
+                    2 -> enitity.add("2")
+                    3 -> enitity.add("3")
+                }
+            }
+        }
+        return enitity
+    }
+
+    // This is ugly AF, so I want to fix this at some point
+    fun getMax(one: Int, two: Int, three: Int): Int?{
+        when{
+            one.compareTo(two) > 0 -> two.compareTo(three)
+            // We'd compare one if it was greater, and it doesn't matter if they're equal
+            else -> when{
+                one.compareTo(three) > 0 -> return three
+                else -> return one
+            }
+        }
+        // This shouldn't be possible....
+        return null
+    }
+
+    fun regexEntity(){
+
+    }
+
+    fun checkForKnownEntity(){}
+    fun checkForWildcardEntity(){}
+
     fun trainWildcardEntities(){
 
     }
@@ -40,7 +85,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
             if (word.toString().startsWith("{")) {
                 //extract word
                 var extracted = "entity".toUpperCase() // I don't know that I need to do this
-                var sentences = inflateEntity()
+                inflated.addAll(inflateEntitySentences())
             }
         }
 
@@ -52,8 +97,8 @@ class ProcessorTrainingService: SapphireFrameworkService(){
         }
     }
 
-    fun inflateEntity(){
-
+    fun inflateEntitySentences(): MutableList<String>{
+        return mutableListOf()
     }
 
     fun entityExtraction(){
