@@ -2,6 +2,10 @@ package net.carrolltech.athena.processor
 
 import android.content.Intent
 import edu.stanford.nlp.classify.ColumnDataClassifier
+import edu.stanford.nlp.ie.NERFeatureFactory
+import edu.stanford.nlp.ie.crf.CRFClassifier
+import edu.stanford.nlp.ling.CoreLabel
+import edu.stanford.nlp.util.CoreMap
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.*
 import java.lang.Exception
@@ -46,26 +50,29 @@ class ProcessorTrainingService: SapphireFrameworkService(){
         return enitity
     }
 
-    // This is ugly AF, so I want to fix this at some point
-    fun getMax(one: Int, two: Int, three: Int): Int?{
-        when{
-            one.compareTo(two) > 0 -> two.compareTo(three)
-            // We'd compare one if it was greater, and it doesn't matter if they're equal
-            else -> when{
-                one.compareTo(three) > 0 -> return three
-                else -> return one
-            }
-        }
-        // This shouldn't be possible....
-        return null
+    // I don't know how I feel about this
+    fun getMax(one: Int, two: Int, three: Int): Int{
+        var temp = Math.max(one,two)
+        return Math.max(temp,three)
     }
 
     fun regexEntity(){
 
     }
 
-    fun checkForKnownEntity(){}
-    fun checkForWildcardEntity(){}
+    fun checkForKnownEntity(){
+
+    }
+
+    fun checkForWildcardEntity(){
+        var properties = Properties()
+
+        // I believe this gives the tagging features for the classifier itself? 
+        var NERfeatures = NERFeatureFactory<CoreLabel>()
+
+        // Is there some reason that this doesn't define CoreMap by default? Check for bugs here
+        var crfClassifier = CRFClassifier<CoreMap>(properties)
+    }
 
     fun trainWildcardEntities(){
 
