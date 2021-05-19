@@ -67,7 +67,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
     fun checkForWildcardEntity(){
         var properties = Properties()
 
-        // I believe this gives the tagging features for the classifier itself? 
+        // I believe this gives the tagging features for the classifier itself?
         var NERfeatures = NERFeatureFactory<CoreLabel>()
 
         // Is there some reason that this doesn't define CoreMap by default? Check for bugs here
