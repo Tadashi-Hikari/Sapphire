@@ -1,7 +1,6 @@
 package net.carrolltech.athena.processor
 
 import android.content.Intent
-import android.os.IBinder
 import edu.stanford.nlp.classify.ColumnDataClassifier
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.*
@@ -23,6 +22,45 @@ class ProcessorTrainingService: SapphireFrameworkService(){
         return super.onStartCommand(intent, flags, startId)
     }
 
+    fun trainWildcardEntities(){
+
+    }
+
+    fun convertEntities(){
+        // if {entity} matches Filename
+        //   -train using filename generated sentences w/ NERFeatureFactory
+        // else
+        //   - train using positional/contextual info
+
+        // This will be tokenized?
+        var sentence = "This is a sentence"
+        var inflated = mutableListOf<String>()
+        var file = File(cacheDir,"testfile")
+        for(word in sentence) {
+            if (word.toString().startsWith("{")) {
+                //extract word
+                var extracted = "entity".toUpperCase() // I don't know that I need to do this
+                var sentences = inflateEntity()
+            }
+        }
+
+        // This will only work for know entities
+        for(sentence in inflated){
+            for(word in sentence) {
+                file.writeText("${word}\t0")
+            }
+        }
+    }
+
+    fun inflateEntity(){
+
+    }
+
+    fun entityExtraction(){
+        // for each .entity, expand
+        // for {wildcard}, positional?
+        //  -useGenericFeatures
+    }
 
     // Hmmm... Too hardcoded?
     var DIALOG = "dialog"
@@ -53,16 +91,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
         return filenames
     }
 
-
-
     fun getTrainingFile(type: String): File{
-        /*
-        Get the list of assistant packages
-        // Will be RAW files, labeled in the XML
-        load the @[<package_name>:]<resource_type>/<resource_name>
-        combineFiles()
-         */
-
         var files = getAssetFiles(INTENT)
         var file = combineFiles(files)
         return file
