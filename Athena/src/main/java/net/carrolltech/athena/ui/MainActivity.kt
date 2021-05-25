@@ -46,6 +46,11 @@ class MainActivity: Activity()
         startService(intent)
     }
 
+    fun testComponent(view: View){
+        var testIntent = Intent().setAction("action.athena.TEST")
+        startService(testIntent)
+    }
+
     // This will likely need to be more dynamic. This is just checking for permissions
     fun checkForPermissions(){
         when{
