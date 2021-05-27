@@ -18,7 +18,6 @@ class ProcessorTrainingService: SapphireFrameworkService(){
         Log.v("ProcessorTrainingService started")
         try{
             when(intent!!.action) {
-                "action.athena.TEST" -> testCode(intent)
                 else -> train (intent)
             }
         }catch(exception: Exception){

@@ -1,9 +1,7 @@
 package net.carrolltech.athena.processor
 
 import android.content.Intent
-import edu.stanford.nlp.ie.NERFeatureFactory
 import edu.stanford.nlp.ie.crf.CRFClassifier
-import edu.stanford.nlp.ling.CoreLabel
 import edu.stanford.nlp.util.CoreMap
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.File
@@ -19,11 +17,30 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
     }
 
     fun testCode(intent: Intent){
-        entityPipeline()
+        var properties = getProperties()
+
+        // I need to expand known sents, and expand training data
+        var expanded = expandSentences()
+
+        var trainingFilepath = getTrainingFilepathFromStrings(expanded)
+        // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
+        // Is there a reason it's not defined as a <CoreMap> by default?
+        var crfClassifier = CRFClassifier<CoreMap>(properties)
+        // hmmm....
+        crfClassifier.train(trainingFilepath)
+        var classifierFilepath = File(cacheDir,"entityClassifier.crf").absolutePath
+        crfClassifier.serializeClassifier(classifierFilepath)
     }
 
-    fun trainEntityPipeline(){
+    fun getTrainingFilepathFromStrings(sentences: Collection<String>): String{
+                var cacheFile = File(cacheDir,"cacheEntityFile")
 
+        for(sentence in sentences){
+            cacheFile.writeText("${sentence}\n")
+        }
+        var filepath = cacheFile.absolutePath
+
+        return filepath
     }
 
     fun entityPipeline(): List<String>{
@@ -61,29 +78,115 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
     }
 
     fun checkForKnownEntity(){
+        var properties = getProperties()
 
+
+        // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
+        // Is there a reason it's not defined as a <CoreMap> by default?
+        var crfClassifier = CRFClassifier<CoreMap>(properties)
+        // hmmm....
+        var filepath = File(cacheDir,"filename").absolutePath
+        crfClassifier.train(filepath)
+        crfClassifier.serializeClassifier(filepath)
     }
 
+    // hmmm....
+    /*
+     I am removing the word as a feature to help reduce overfitting, I am concerned about
+     repetitive sentences though, since they'll cause the classifier to overfit anyway. That said,
+     should I add noise?
+     */
     fun checkForWildcardEntity(){
+        var properties = getProperties()
+
+        // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
+        // Is there a reason it's not defined as a <CoreMap> by default?
+        var crfClassifier = CRFClassifier<CoreMap>(properties)
+        // hmmm....
+        var filepath = File(cacheDir,"filename").absolutePath
+        crfClassifier.train(filepath)
+        crfClassifier.serializeClassifier(filepath)
+    }
+
+    fun getWildcardProperties(): Properties{
+        var properties = getProperties()
+        properties.setProperty("useWord","false")
+        return properties
+    }
+
+    fun getProperties(): Properties{
         var properties = Properties()
 
-        // I believe this gives the tagging features for the classifier itself?
-        var NERfeatures = NERFeatureFactory<CoreLabel>()
-        var stuff = NERfeatures
+        /*
+         This tells the CRFClassifier what is in each column
+         This can be used to add features (such as other tags) if pipelining
+         Might also be able to use it to set a generic/wildcard feature
+         */
+        properties.setProperty("map","word=0,answer=1")
+        properties.setProperty("usePrev","true")
+        properties.setProperty("useNext","true")
 
-        // Is there some reason that this doesn't define CoreMap by default? Check for bugs here
-        var crfClassifier = CRFClassifier<CoreMap>(properties)
+        return properties
     }
 
-    fun trainWildcardEntities(){
+    var INITIALIZE = "action.athena.skill.INITIALIZE"
 
+    fun getAssetFiles(type: String): List<String>{
+
+        // This will exist in *every* Athena skill
+        var intent = Intent().setAction(INITIALIZE)
+        var filenames = mutableListOf<String>()
+        // Get all of Athena's skills
+        Log.v("Querying packages")
+        var queryResults = this.packageManager.queryIntentServices(intent,0)
+        Log.v("${queryResults.size} results found")
+        for(resolveInfo in queryResults){
+            var packageName = resolveInfo.serviceInfo.packageName
+            var packageResources = this.packageManager.getResourcesForApplication(packageName)
+            var assetsStuff = packageResources.assets
+            for(filename in assetsStuff.list("")!!){
+                Log.v("File to check: ${filename}")
+                if(filename.endsWith(type)){
+                    var inputStream = assetsStuff.open(filename)
+                    filenames.add(convertAssetToFile(inputStream, filename))
+                    Log.v("Converted ${filename} to file")
+                }
+            }
+        }
+        return filenames
     }
 
-    fun convertEntities(){
-        // if {entity} matches Filename
-        //   -train using filename generated sentences w/ NERFeatureFactory
-        // else
-        //   - train using positional/contextual info
+    var INTENT = "intent"
+    var ENTITY = "entity"
+
+    fun getTrainingFile(type: String): File{
+        var files = getAssetFiles(INTENT)
+        var file = combineFiles(files)
+        return file
+    }
+
+    fun convertAssetToFile(inputStream: InputStream, filename: String): String{
+        Log.v("Converting resource to file")
+        try{
+            var data = inputStream.read()
+            var cacheFile = File(cacheDir,"${filename}.temp")
+            var cacheFileWriter = cacheFile.outputStream()
+
+            while(data != -1){
+                cacheFileWriter.write(data)
+                data = inputStream.read()
+            }
+            cacheFileWriter.close()
+            Log.v("File converted")
+            return cacheFile.name
+        }catch (exception: Exception){
+            exception.printStackTrace()
+            return ""
+        }
+    }
+
+    fun expandSentences(): List<String>{
+        var files = requestFiles()
 
         // This will be tokenized?
         var sentence = "This is a sentence"
@@ -103,15 +206,11 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
                 file.writeText("${word}\t0")
             }
         }
+
+        return inflated
     }
 
     fun inflateEntitySentences(): MutableList<String>{
         return mutableListOf()
-    }
-
-    fun entityExtraction(){
-        // for each .entity, expand
-        // for {wildcard}, positional?
-        //  -useGenericFeatures
     }
 }
