@@ -156,33 +156,12 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         return filenames
     }
 
-    var INTENT = "intent"
-    var ENTITY = "entity"
-
     fun getTrainingFile(type: String): File{
-        var files = getAssetFiles(INTENT)
-        var file = combineFiles(files)
+        var entityFiles = getAssetFiles(ENTITY)
+        var intentFiles = getAssetFiles(INTENT)
+        var something = expandSentences(entityFiles)
+
         return file
-    }
-
-    fun convertAssetToFile(inputStream: InputStream, filename: String): String{
-        Log.v("Converting resource to file")
-        try{
-            var data = inputStream.read()
-            var cacheFile = File(cacheDir,"${filename}.temp")
-            var cacheFileWriter = cacheFile.outputStream()
-
-            while(data != -1){
-                cacheFileWriter.write(data)
-                data = inputStream.read()
-            }
-            cacheFileWriter.close()
-            Log.v("File converted")
-            return cacheFile.name
-        }catch (exception: Exception){
-            exception.printStackTrace()
-            return ""
-        }
     }
 
     fun expandSentences(): List<String>{
@@ -210,7 +189,47 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         return inflated
     }
 
-    fun inflateEntitySentences(): MutableList<String>{
-        return mutableListOf()
+    fun convertAssetToFile(inputStream: InputStream, filename: String): String{
+        Log.v("Converting resource to file")
+        try{
+            var data = inputStream.read()
+            var cacheFile = File(cacheDir,"${filename}.temp")
+            var cacheFileWriter = cacheFile.outputStream()
+
+            while(data != -1){
+                cacheFileWriter.write(data)
+                data = inputStream.read()
+            }
+            cacheFileWriter.close()
+            Log.v("File converted")
+            return cacheFile.name
+        }catch (exception: Exception){
+            exception.printStackTrace()
+            return ""
+        }
+    }
+
+    fun getAssetFiles(type: String): List<String>{
+        // This will exist in *every* Athena skill
+        var intent = Intent().setAction(INITIALIZE)
+        var filenames = mutableListOf<String>()
+        // Get all of Athena's skills
+        Log.v("Querying packages")
+        var queryResults = this.packageManager.queryIntentServices(intent,0)
+        Log.v("${queryResults.size} results found")
+        for(resolveInfo in queryResults){
+            var packageName = resolveInfo.serviceInfo.packageName
+            var packageResources = this.packageManager.getResourcesForApplication(packageName)
+            var assetsStuff = packageResources.assets
+            for(filename in assetsStuff.list("")!!){
+                Log.v("File to check: ${filename}")
+                if(filename.endsWith(type)){
+                    var inputStream = assetsStuff.open(filename)
+                    filenames.add(convertAssetToFile(inputStream, filename))
+                    Log.v("Converted ${filename} to file")
+                }
+            }
+        }
+        return filenames
     }
 }
