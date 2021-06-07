@@ -66,6 +66,30 @@ class temp: SapphireFrameworkService(){
         }
     }
 
+    fun recursiveExpandSentences(sentences: List<String>): Pair<List<String>,List<String>>{
+        var expandedSentences = mutableListOf<String>()
+        var formattedSetnences = mutableListOf<String>()
+        // List of entity titles, and their list of tokens
+        var entityMap = mutableMapOf<String,List<String>>()
+
+        for(entity in entityMap){
+            for(sentence in sentences){
+                var tokenizer = StringTokenizer(sentence)
+                while(tokenizer.hasMoreTokens()){
+                    var token = tokenizer.nextToken()
+                    // This should directly match the internal entity?
+                    if(token.regionMatches(1,entity.key,1,entity.key.length)){
+                        for(value in entity.value) {
+
+                        }
+                        recursiveExpandSentences(expandedSentences)
+                    }
+                }
+            }
+        }
+        return Pair(expandedSentences,formattedSetnences)
+    }
+
     /*
         I need... to take all sentences w/ {entities} and match them to the entity using the CRF
         This means I need to covert the sentences to usable/prepared entity files. Expanding them
