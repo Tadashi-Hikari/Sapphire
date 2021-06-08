@@ -10,6 +10,31 @@ import java.util.*
 
 class temp: SapphireFrameworkService(){
 
+    // This is the filename and lines of each entity file
+    var entityMap = mutableMapOf<String,List<String>>()
+    // This is the filename and lines of each intent file
+    var intentMap = mutableMapOf<String,List<String>>()
+
+    // This should work, outright. Maybe not the fastest in the world, but I think it's where it needs to go
+    fun entityExtractionPipeline(){
+        var intentFiles = getAssetFiles(INTENT)
+        var entityFiles = getAssetFiles(ENTITY)
+
+        var expandedPair = recursiveExpandSentences(emptyList())
+        // the first one can be used for training the intent parser (without wildcards), or a regex one.
+        // The second is the one formatted for training the entity extractor
+        var trainingFilepath = convertStringsToFile(expandedPair.second)
+
+        var properties = getProperties()
+        // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
+        // Is there a reason it's not defined as a <CoreMap> by default?
+        var crfClassifier = CRFClassifier<CoreMap>(properties)
+        // hmmm....
+        crfClassifier.train(trainingFilepath)
+
+        var classifierFilepath = File(cacheDir,"entityExtractor").absolutePath
+        crfClassifier.serializeClassifier(classifierFilepath)
+    }
 
     fun runEntityExtractor(utterance: String){
         var properties = getProperties()
@@ -66,68 +91,14 @@ class temp: SapphireFrameworkService(){
         }
     }
 
-    fun recursiveExpandSentences(sentences: List<String>): Pair<List<String>,List<String>>{
-        var expandedSentences = mutableListOf<String>()
-        var formattedSetnences = mutableListOf<String>()
-        // List of entity titles, and their list of tokens
+
+
+    // This formats the sentences for the CRF training, in the one word per line format
+    fun formatSentences(): List<String>{
         var entityMap = mutableMapOf<String,List<String>>()
-
-        for(entity in entityMap){
-            for(sentence in sentences){
-                var tokenizer = StringTokenizer(sentence)
-                while(tokenizer.hasMoreTokens()){
-                    var token = tokenizer.nextToken()
-                    // This should directly match the internal entity?
-                    if(token.regionMatches(1,entity.key,1,entity.key.length)){
-                        for(value in entity.value) {
-
-                        }
-                        recursiveExpandSentences(expandedSentences)
-                    }
-                }
-            }
-        }
-        return Pair(expandedSentences,formattedSetnences)
-    }
-
-    /*
-        I need... to take all sentences w/ {entities} and match them to the entity using the CRF
-        This means I need to covert the sentences to usable/prepared entity files. Expanding them
-        by adding in the words, and then formatting them
-    */
-    fun expandSentences(intents: List<String>, entities: List<String>): List<String>{
         var formattedSentences = mutableListOf<String>()
-
-        // This is the filename/type, and the lines
-        var entityMap = mutableMapOf<String,List<String>>()
-        // I don't think that I need to track which intent I am following, just the entity
         var intentLines = mutableListOf<String>()
 
-        // I could see this running in O^n time, so I need to be careful
-        // I need to extract the sentences. I can probably optimize this
-        for(entityFilepath in intents){
-            var entityFile = File(cacheDir,entityFilepath)
-            var entityTokens = mutableListOf<String>()
-            // This should take
-            for(line in entityFile.readLines()){
-                // I need to be sure this isn't stripping the whitespace
-                entityTokens.add(line)
-            }
-            // This should create
-            entityMap.put(entityFile.name,entityTokens)
-        }
-
-        for(intentFilepath in intents) {
-            var intentFile = File(cacheDir, intentFilepath)
-            // This should take
-            for (line in intentFile.readLines()) {
-                // I need to be sure this isn't stripping the whitespace
-                intentLines.add(line)
-            }
-        }
-
-        // I need to replace all entitiesTokens w/ the entity themselves
-        // This should actually be a recursive function, that calls itself whenever an entity is found in a sentence
         for(currentEntityMap in entityMap){
             for(line in intentLines){
 
@@ -159,6 +130,41 @@ class temp: SapphireFrameworkService(){
         }
 
         return formattedSentences
+    }
+
+    /*
+        I need... to take all sentences w/ {entities} and match them to the entity using the CRF
+        This means I need to covert the sentences to usable/prepared entity files. Expanding them
+        by adding in the words, and then formatting them
+    */
+    fun expandSentences(intents: List<String>, entities: List<String>): List<String>{
+
+        // I could see this running in O^n time, so I need to be careful
+        // I need to extract the sentences. I can probably optimize this
+        for(entityFilepath in intents){
+            var entityFile = File(cacheDir,entityFilepath)
+            var entityTokens = mutableListOf<String>()
+            // This should take
+            for(line in entityFile.readLines()){
+                // I need to be sure this isn't stripping the whitespace
+                entityTokens.add(line)
+            }
+            // This should create
+            entityMap.put(entityFile.name,entityTokens)
+        }
+
+        for(intentFilepath in intents) {
+            var intentFile = File(cacheDir, intentFilepath)
+            // This should take
+            for (line in intentFile.readLines()) {
+                // I need to be sure this isn't stripping the whitespace
+                intentLines.add(line)
+            }
+        }
+
+        // I need to replace all entitiesTokens w/ the entity themselves
+        // This should actually be a recursive function, that calls itself whenever an entity is found in a sentence
+
     }
 
     var INITIALIZE = "action.athena.skill.INITIALIZE"

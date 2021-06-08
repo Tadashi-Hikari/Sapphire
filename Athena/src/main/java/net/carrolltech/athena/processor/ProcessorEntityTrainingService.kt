@@ -8,6 +8,11 @@ import java.io.File
 import java.util.*
 
 class ProcessorEntityTrainingService : SapphireFrameworkService() {
+
+    var INITIALIZE = "action.athena.skill.INITIALIZE"
+    var INTENT = "intent"
+    var ENTITY = "entity"
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action){
             "action.athena.TEST" -> testCode(intent)
@@ -16,20 +21,66 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    // This is the filename and lines of each entity file
+    var entityMap = mutableMapOf<String,List<String>>()
+    // This is the filename and lines of each intent file
+    var intentMap = mutableMapOf<String,List<String>>()
+
     fun testCode(intent: Intent){
+        var intentFiles = getAssetFiles(INTENT)
+        var entityFiles = getAssetFiles(ENTITY)
+
+        var expandedPair = recursiveExpandSentences(emptyList())
+        // the first one can be used for training the intent parser (without wildcards), or a regex one.
+        // The second is the one formatted for training the entity extractor
+        var trainingFilepath = convertStringsToFile(expandedPair.second)
+
         var properties = getProperties()
-
-        // I need to expand known sents, and expand training data
-        var expanded = expandSentences()
-
-        var trainingFilepath = getTrainingFilepathFromStrings(expanded)
         // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
         // Is there a reason it's not defined as a <CoreMap> by default?
         var crfClassifier = CRFClassifier<CoreMap>(properties)
         // hmmm....
         crfClassifier.train(trainingFilepath)
-        var classifierFilepath = File(cacheDir,"entityClassifier.crf").absolutePath
+
+        var classifierFilepath = File(cacheDir,"entityExtractor").absolutePath
         crfClassifier.serializeClassifier(classifierFilepath)
+
+    }
+
+    // Might as well run this through the test, and see how it works
+    fun recursiveExpandSentences(sentences: List<String>): Pair<List<String>,List<String>>{
+        // These are the sentences to train on
+        var expandedSentences = mutableListOf<String>()
+        // This is formatted for training the CRFClassifier
+        var formattedSentences = mutableListOf<String>()
+
+        for(entity in entityMap){
+            for(sentence in sentences){
+                var tokenizer = StringTokenizer(sentence)
+                //
+                var index = 0
+                while(tokenizer.hasMoreTokens()){
+                    var token = tokenizer.nextToken()
+                    // This should directly match the internal entity?
+                    if(token.regionMatches(1,entity.key,1,entity.key.length)){
+                        for(value in entity.value) {
+                            var selfTokenized = sentence.split("\s") as MutableList
+                            selfTokenized.set(index,value)
+                            // This should do what I need it to. Should I just use this instead of the Java tokenizer?
+                            expandedSentences.add(selfTokenized.joinToString(" "))
+                            Log.v(selfTokenized.joinToString(" "))
+                        }
+                        var returnedPair = recursiveExpandSentences(expandedSentences)
+                        // Is this needlessly bulky?
+                        // This is going to return [] stuff, that should be replaced/flushed out...
+                        expandedSentences.addAll(returnedPair.first)
+                        formattedSentences.addAll(returnedPair.second)
+                    }
+                    index++
+                }
+            }
+        }
+        return Pair(expandedSentences,formattedSentences)
     }
 
     fun getTrainingFilepathFromStrings(sentences: Collection<String>): String{
@@ -128,8 +179,6 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
 
         return properties
     }
-
-    var INITIALIZE = "action.athena.skill.INITIALIZE"
 
     fun getAssetFiles(type: String): List<String>{
 
