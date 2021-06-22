@@ -5,6 +5,7 @@ import edu.stanford.nlp.ie.crf.CRFClassifier
 import edu.stanford.nlp.util.CoreMap
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.File
+import java.io.InputStream
 import java.util.*
 
 class ProcessorEntityTrainingService : SapphireFrameworkService() {
@@ -45,6 +46,16 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         var classifierFilepath = File(cacheDir,"entityExtractor").absolutePath
         crfClassifier.serializeClassifier(classifierFilepath)
 
+    }
+
+    fun convertStringsToFile(stringList: List<String>): String{
+        var file = File(cacheDir, "stringCache")
+
+        for(line in stringList){
+            file.writeText("${line}\n")
+        }
+
+        return file.absolutePath
     }
 
     // Might as well run this through the test, and see how it works
@@ -100,7 +111,7 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         var enitity = mutableListOf<String>()
 
         // Each one of these returns a list
-        regexEntity()
+        //regexEntity()
         checkForKnownEntity()
         checkForWildcardEntity()
 
@@ -122,10 +133,6 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
     fun getMax(one: Int, two: Int, three: Int): Int{
         var temp = Math.max(one,two)
         return Math.max(temp,three)
-    }
-
-    fun regexEntity(){
-
     }
 
     fun checkForKnownEntity(){
@@ -208,12 +215,19 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
     fun getTrainingFile(type: String): File{
         var entityFiles = getAssetFiles(ENTITY)
         var intentFiles = getAssetFiles(INTENT)
+        // How exactly am I expecting to expand this?
         var something = expandSentences(entityFiles)
 
         return file
     }
 
+    // Isn't this duplicated elsewhere...?
+    fun requestFiles(){
+        getAssetFiles("filename")
+    }
+
     fun expandSentences(): List<String>{
+        // This is always requesting assets right?
         var files = requestFiles()
 
         // This will be tokenized?
@@ -238,6 +252,10 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         return inflated
     }
 
+    fun inflateEntitySentences(){
+        // I don't remember the purpose of this
+    }
+
     fun convertAssetToFile(inputStream: InputStream, filename: String): String{
         Log.v("Converting resource to file")
         try{
@@ -256,29 +274,5 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
             exception.printStackTrace()
             return ""
         }
-    }
-
-    fun getAssetFiles(type: String): List<String>{
-        // This will exist in *every* Athena skill
-        var intent = Intent().setAction(INITIALIZE)
-        var filenames = mutableListOf<String>()
-        // Get all of Athena's skills
-        Log.v("Querying packages")
-        var queryResults = this.packageManager.queryIntentServices(intent,0)
-        Log.v("${queryResults.size} results found")
-        for(resolveInfo in queryResults){
-            var packageName = resolveInfo.serviceInfo.packageName
-            var packageResources = this.packageManager.getResourcesForApplication(packageName)
-            var assetsStuff = packageResources.assets
-            for(filename in assetsStuff.list("")!!){
-                Log.v("File to check: ${filename}")
-                if(filename.endsWith(type)){
-                    var inputStream = assetsStuff.open(filename)
-                    filenames.add(convertAssetToFile(inputStream, filename))
-                    Log.v("Converted ${filename} to file")
-                }
-            }
-        }
-        return filenames
     }
 }
