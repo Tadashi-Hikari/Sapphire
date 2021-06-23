@@ -48,6 +48,7 @@ class MainActivity: Activity()
 
     fun testComponent(view: View){
         var testIntent = Intent().setAction("action.athena.TEST")
+        testIntent.setClassName(this,"net.carrolltech.athena.processor.ProcessorEntityTrainingService")
         startService(testIntent)
     }
 
