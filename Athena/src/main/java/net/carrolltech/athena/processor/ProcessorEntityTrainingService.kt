@@ -14,6 +14,11 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
     var INTENT = "intent"
     var ENTITY = "entity"
 
+    override fun onCreate() {
+        super.onCreate()
+        Log.v("onCreate called")
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.v("Intent received")
         when(intent?.action){
@@ -46,7 +51,6 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
 
         var classifierFilepath = File(cacheDir,"entityExtractor").absolutePath
         crfClassifier.serializeClassifier(classifierFilepath)
-
     }
 
     fun convertStringsToFile(stringList: List<String>): String{

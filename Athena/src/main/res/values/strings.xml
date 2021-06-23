@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Athena</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Athena</string>
     <string name="processor_class">"net.carrolltech.athena.processor.ProcessorCentralService</string>
 </resources>
 

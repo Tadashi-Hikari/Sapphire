@@ -42,7 +42,13 @@
             android:name=".processor.ProcessorTrainingService"
             android:process=":ProcessorTrainingService">
         </service>
-        <service android:name=".core.CoreService" />
+        <service
+            android:name=".processor.ProcessorEntityTrainingService"
+            android:process=":ProcessorEntityTrainingService">
+        </service>
+        <service
+            android:name=".core.CoreService">
+        </service>
         <service
             android:name=".stt.AthenaVoiceInteractionService"
             android:exported="true"
