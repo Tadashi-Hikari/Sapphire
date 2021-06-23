@@ -15,6 +15,7 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
     var ENTITY = "entity"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.v("Intent received")
         when(intent?.action){
             "action.athena.TEST" -> testCode(intent)
             else -> null
@@ -75,7 +76,7 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
                     // This should directly match the internal entity?
                     if(token.regionMatches(1,entity.key,1,entity.key.length)){
                         for(value in entity.value) {
-                            var selfTokenized = sentence.split("\s") as MutableList
+                            var selfTokenized = sentence.split(" ") as MutableList
                             selfTokenized.set(index,value)
                             // This should do what I need it to. Should I just use this instead of the Java tokenizer?
                             expandedSentences.add(selfTokenized.joinToString(" "))
@@ -92,60 +93,6 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
             }
         }
         return Pair(expandedSentences,formattedSentences)
-    }
-
-    fun getTrainingFilepathFromStrings(sentences: Collection<String>): String{
-                var cacheFile = File(cacheDir,"cacheEntityFile")
-
-        for(sentence in sentences){
-            cacheFile.writeText("${sentence}\n")
-        }
-        var filepath = cacheFile.absolutePath
-
-        return filepath
-    }
-
-    fun entityPipeline(): List<String>{
-        // I need the confidence, and I need the token/location?
-        var tokens = emptyList<String>()
-        var enitity = mutableListOf<String>()
-
-        // Each one of these returns a list
-        //regexEntity()
-        checkForKnownEntity()
-        checkForWildcardEntity()
-
-        // This does the combination
-        for(index in tokens){
-            if(index != "0") {
-                var max = getMax(1, 2, 3)
-                when (max) {
-                    1 -> enitity.add("1")
-                    2 -> enitity.add("2")
-                    3 -> enitity.add("3")
-                }
-            }
-        }
-        return enitity
-    }
-
-    // I don't know how I feel about this
-    fun getMax(one: Int, two: Int, three: Int): Int{
-        var temp = Math.max(one,two)
-        return Math.max(temp,three)
-    }
-
-    fun checkForKnownEntity(){
-        var properties = getProperties()
-
-
-        // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
-        // Is there a reason it's not defined as a <CoreMap> by default?
-        var crfClassifier = CRFClassifier<CoreMap>(properties)
-        // hmmm....
-        var filepath = File(cacheDir,"filename").absolutePath
-        crfClassifier.train(filepath)
-        crfClassifier.serializeClassifier(filepath)
     }
 
     // hmmm....
@@ -212,48 +159,9 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         return filenames
     }
 
-    fun getTrainingFile(type: String): File{
-        var entityFiles = getAssetFiles(ENTITY)
-        var intentFiles = getAssetFiles(INTENT)
-        // How exactly am I expecting to expand this?
-        var something = expandSentences(entityFiles)
-
-        return file
-    }
-
     // Isn't this duplicated elsewhere...?
     fun requestFiles(){
         getAssetFiles("filename")
-    }
-
-    fun expandSentences(): List<String>{
-        // This is always requesting assets right?
-        var files = requestFiles()
-
-        // This will be tokenized?
-        var sentence = "This is a sentence"
-        var inflated = mutableListOf<String>()
-        var file = File(cacheDir,"testfile")
-        for(word in sentence) {
-            if (word.toString().startsWith("{")) {
-                //extract word
-                var extracted = "entity".toUpperCase() // I don't know that I need to do this
-                inflated.addAll(inflateEntitySentences())
-            }
-        }
-
-        // This will only work for know entities
-        for(sentence in inflated){
-            for(word in sentence) {
-                file.writeText("${word}\t0")
-            }
-        }
-
-        return inflated
-    }
-
-    fun inflateEntitySentences(){
-        // I don't remember the purpose of this
     }
 
     fun convertAssetToFile(inputStream: InputStream, filename: String): String{
