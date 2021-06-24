@@ -41,12 +41,14 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         // the first one can be used for training the intent parser (without wildcards), or a regex one.
         // The second is the one formatted for training the entity extractor
         var trainingFilepath = convertStringsToFile(expandedPair.second)
+        Log.v("Training file: ${trainingFilepath}")
 
         var properties = getProperties()
         // The properties are those of a NERFeatureFactory, since the CRFClassifer uses one by default
         // Is there a reason it's not defined as a <CoreMap> by default?
         var crfClassifier = CRFClassifier<CoreMap>(properties)
         // hmmm....
+        Log.v(trainingFilepath)
         crfClassifier.train(trainingFilepath)
 
         var classifierFilepath = File(cacheDir,"entityExtractor").absolutePath
@@ -55,8 +57,11 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
 
     fun convertStringsToFile(stringList: List<String>): String{
         var file = File(cacheDir, "stringCache")
-
+        Log.v("stringList: ${stringList}")
+        // This was needed. The file was not automatically created
+        file.createNewFile()
         for(line in stringList){
+            Log.v("Writing line: ${line}")
             file.writeText("${line}\n")
         }
 
@@ -152,7 +157,7 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
             var packageResources = this.packageManager.getResourcesForApplication(packageName)
             var assetsStuff = packageResources.assets
             for(filename in assetsStuff.list("")!!){
-                Log.v("File to check: ${filename}")
+                //Log.v("File to check: ${filename}")
                 if(filename.endsWith(type)){
                     var inputStream = assetsStuff.open(filename)
                     filenames.add(convertAssetToFile(inputStream, filename))
@@ -163,13 +168,8 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
         return filenames
     }
 
-    // Isn't this duplicated elsewhere...?
-    fun requestFiles(){
-        getAssetFiles("filename")
-    }
-
     fun convertAssetToFile(inputStream: InputStream, filename: String): String{
-        Log.v("Converting resource to file")
+        //Log.v("Converting resource to file")
         try{
             var data = inputStream.read()
             var cacheFile = File(cacheDir,"${filename}.temp")
@@ -180,7 +180,7 @@ class ProcessorEntityTrainingService : SapphireFrameworkService() {
                 data = inputStream.read()
             }
             cacheFileWriter.close()
-            Log.v("File converted")
+            //Log.v("File converted")
             return cacheFile.name
         }catch (exception: Exception){
             exception.printStackTrace()
