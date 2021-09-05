@@ -2,3 +2,4 @@ rootProject.name = "Athena"
 include ':Athena'
 include ':AthenaAlarmSkill'
 include ':AthenaWeatherSkill'
+include ':GenericSkill'
