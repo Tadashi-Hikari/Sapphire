@@ -23,15 +23,14 @@ import java.lang.StringBuilder
 import java.util.*
 
 class TemporaryEntityExtractor: SapphireFrameworkService() {
-
     var INITIALIZE = "action.athena.skill.INITIALIZE"
     var INTENT = "intent"
     var ENTITY = "entity"
 
-    var intentFiles = getAssetFiles(INTENT)
-    var entityFiles = getAssetFiles(ENTITY)
+    lateinit var intentFiles: List<String>
+    lateinit var entityFiles: List<String>
 
-    var classifier = loadClassifier()
+    lateinit var classifier: CRFClassifier<CoreLabel> // = loadClassifier()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.v("Intent received")
@@ -43,11 +42,20 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    // Currently, the test code should get all assets, and train the classifier on it
     fun testCode(intent: Intent){
-        getTrainingFile(INTENT)
-        getTrainingFile(Entity)
+        // Request all intent and entity files
+        intentFiles = getAssetFiles(INTENT)
+        entityFiles = getAssetFiles(ENTITY)
+        Log.v("Assets gathered")
+        Log.v("${intentFiles}\n${entityFiles}")
 
-        trainClassifier()
+        if(intentFiles.isNotEmpty() and entityFiles.isNotEmpty()) {
+            // This returns a File
+            var intentFile = combineFiles(intentFiles)
+            var expandedIntents = convertIntentToEntityTrainingFile(intentFile, entityFiles)
+            trainClassifier(expandedIntents)
+        }
     }
 
     fun testInput(intent: Intent){
@@ -56,48 +64,101 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
     }
 
     // This should definitely be recursive
-    fun convertIntentToEntityTrainingFile(){
-        var file = File("filename")
+    fun convertIntentToEntityTrainingFile(intentsFile: File, entityFiles: List<String>): File{
+        // This is the intents file
         var formatted = listOf<Pair<String,String>>()
-        file.forEachLine { line ->
+        // This is only set up for a single entity per sentence. Likely will need adjustment
+        intentsFile.forEachLine { line ->
+            //  This may not be the best place to declare this
+            var entityPair: Pair<String,Int>? = null
             // Split it in to tokens
             var tokens = line.split(" ")
             var index = 0
             for(token in tokens){
-                Log.v(token)
-                if(token.startsWith("{")) {
+                var cleanedToken = token
+                // Get rid of the class. This is ugly, but should work
+                if(token.contains("\t")){
+                     cleanedToken = token.substringAfter("\t")
+                }
+                Log.v(cleanedToken)
+                if(cleanedToken.startsWith("{")) {
                     // Save the index
                     index = tokens.indexOf(token)
+                    entityPair = Pair<String,Int>(token,index)
+                    Log.v("Found a token that starts with a {. It's ${entityPair.first} at index ${entityPair.second}")
                 }
             }
+
             // If one of them needed to be expanded, then expand it
-            if(index != 0){
+            if(entityPair != null){
+                Log.v("Expaning intent for entities")
                 // this will be for the entity file, but I haven't changed it yet
-                var newRecords = mutableListOf<Pair<String,String>>()
-                file.forEachLine { entity ->
-                    newRecords.addAll(formatted)
-                    newRecords.set(index,Pair(entity,"entityType"))
+                var newRecords = mutableListOf<Pair<String, String>>()
+                var entityFilename = loadEntityFile(entityPair.first)
+                if (entityFilename != null) {
+                    var entityFile = File(entityFilename)
+                    entityFile.forEachLine { entity ->
+                        newRecords.addAll(formatted)
+                        newRecords.set(index, Pair(entity, "entityType"))
+                    }
+                    formatted = newRecords
+                }else{
+                    Log.e("There doesn't seem to be an entity file for that entity")
                 }
-                formatted = newRecords
             }
         }
+
+        Log.v("Intents expanded")
         var outFile = File("outfile")
         formatted.forEach { row ->
             // This should write it in proper format.
+            Log.v(row.toString())
             outFile.writeText("${row.first}\t${row.second}\n")
         }
+        return outFile
     }
 
-    fun trainClassifier(){
-        convertIntentToEntityTrainingFile()
+    fun loadEntityFile(entityName: String): String?{
+        var formatted = entityName.substring(1,entityName.length-1)
+        formatted = "${formatted}.entity.temp"
+        Log.v("Formatted entity filename: ${formatted}")
+        for(index in entityFiles){
+            Log.v("Checking ${index} for match with ${formatted}")
+            if(formatted == index){
+                return index
+            }
+        }
+        return null
+    }
+
+    fun trainClassifier(expandedIntents: File){
+        // This is a terrible variable name, but it's temporary
+        var filename = expandedIntents.canonicalPath
+        var props = Properties()
+        // These are defaults copied from https://nlp.stanford.edu/software/crf-faq.html
+        props.setProperty("UseClassFeature","true")
+        props.setProperty("useWord","true")
+        props.setProperty("useNGrams","true")
+        props.setProperty("noMidNGrams","true")
+        props.setProperty("maxNGramLeng","6")
+        props.setProperty("usePrev","true")
+        props.setProperty("useNext","true")
+        props.setProperty("useSequences","true")
+        props.setProperty("usePrevSequences","true")
+        props.setProperty("maxLeft","1")
+        props.setProperty("useTypeSeqs","true")
+        props.setProperty("useTypeSeqs2","true")
+        props.setProperty("useTypeySequences","true")
+        props.setProperty("wordShape","chris2useLC")
+        props.setProperty("useDisjunctive","true")
 
         var reader = ColumnDocumentReaderAndWriter()
         // This just needs to be edited to read a two column document, rather than three column
         reader.init("word=0,answer=1")
 
-        // Well, lets see if this works...
-        var crfClassifier = CRFClassifier.getClassifier(CRFClassifier.DEFAULT_CLASSIFIER)
-        crfClassifier.train("filename", reader)
+        classifier = CRFClassifier<CoreLabel>(props)
+        classifier.train(filename, reader)
+        Log.v("Classifier trained")
     }
 
     fun saveClassifier(classifier: CRFClassifier<CoreLabel>){
@@ -106,7 +167,7 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
     }
 
     fun loadClassifier(): CRFClassifier<CoreLabel>{
-        return CRFClassifier.getClassifier(CRFClassifier.DEFAULT_CLASSIFIER)
+        return CRFClassifier.getClassifier("filename")
     }
 
     fun getAssetFiles(type: String): List<String>{
@@ -133,12 +194,7 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         return filenames
     }
 
-    fun getTrainingFile(type: String): File{
-        var files = getAssetFiles(INTENT)
-        var file = combineFiles(files)
-        return file
-    }
-
+    // This is called from inside getAssetFile
     fun convertAssetToFile(inputStream: InputStream, filename: String): String{
         Log.v("Converting resource to file")
         try{
@@ -163,16 +219,15 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
     fun combineFiles(files: List<String>): File{
         var combinedFile = File.createTempFile("trainingFile",".tmp", cacheDir)
 
-        for(filename in files){
-            var file = File(cacheDir,filename)
-            for(line in file.readLines()){
+        for (filename in files) {
+            var file = File(cacheDir, filename)
+            for (line in file.readLines()) {
                 Log.i("Line being added: ${line.trim()}")
                 // I need to be careful. I could be adding unneeded white space
                 combinedFile.appendText("${line.trim()}\n")
             }
         }
         Log.v("File combined")
-        //combinedFile.
         return combinedFile
     }
 }
