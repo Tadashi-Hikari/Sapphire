@@ -66,8 +66,9 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
     // This should definitely be recursive
     fun convertIntentToEntityTrainingFile(intentsFile: File, entityFiles: List<String>): File{
         // This is the intents file
-        var formatted = listOf<Pair<String,String>>()
+        var formatted = mutableListOf<Pair<String,String>>()
         // This is only set up for a single entity per sentence. Likely will need adjustment
+        var cleanedTokenList = mutableListOf<String>()
         intentsFile.forEachLine { line ->
             //  This may not be the best place to declare this
             var entityPair: Pair<String,Int>? = null
@@ -78,9 +79,10 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
                 var cleanedToken = token
                 // Get rid of the class. This is ugly, but should work
                 if(token.contains("\t")){
-                     cleanedToken = token.substringAfter("\t")
+                    cleanedToken = token.substringAfter("\t")
                 }
                 Log.v(cleanedToken)
+                cleanedTokenList.add(cleanedToken)
                 if(cleanedToken.startsWith("{")) {
                     // Save the index
                     index = tokens.indexOf(token)
@@ -94,14 +96,21 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
                 Log.v("Expaning intent for entities")
                 // this will be for the entity file, but I haven't changed it yet
                 var newRecords = mutableListOf<Pair<String, String>>()
+                for(token in cleanedTokenList){
+                    newRecords.add(Pair<String,String>(token,"O"))
+                }
+                Log.v("This is what the newRecords looks like: ${newRecords.toString()}")
                 var entityFilename = loadEntityFile(entityPair.first)
+                Log.v("Entity filename: ${entityFilename.toString()}")
                 if (entityFilename != null) {
-                    var entityFile = File(entityFilename)
+                    var entityFile = File(cacheDir,entityFilename)
+                    // for every entity word in the file
                     entityFile.forEachLine { entity ->
-                        newRecords.addAll(formatted)
-                        newRecords.set(index, Pair(entity, "entityType"))
+                        //new records should be a copy of the prior sentence. Basically, the cleanedToken list
+                        newRecords.set(index, Pair(entity, entityFilename.substringBefore(".")))
+                        formatted.addAll(newRecords)
+
                     }
-                    formatted = newRecords
                 }else{
                     Log.e("There doesn't seem to be an entity file for that entity")
                 }
@@ -109,10 +118,10 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         }
 
         Log.v("Intents expanded")
-        var outFile = File("outfile")
+        var outFile = File(cacheDir,"outfile")
         formatted.forEach { row ->
             // This should write it in proper format.
-            Log.v(row.toString())
+            Log.v("${row.first}\t${row.second}\n")
             outFile.writeText("${row.first}\t${row.second}\n")
         }
         return outFile
