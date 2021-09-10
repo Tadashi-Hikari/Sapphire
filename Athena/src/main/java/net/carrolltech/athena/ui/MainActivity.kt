@@ -52,6 +52,10 @@ class MainActivity: Activity()
         startService(testIntent)
     }
 
+    fun sendTestMessage(){
+
+    }
+
     // This will likely need to be more dynamic. This is just checking for permissions
     fun checkForPermissions(){
         when{
