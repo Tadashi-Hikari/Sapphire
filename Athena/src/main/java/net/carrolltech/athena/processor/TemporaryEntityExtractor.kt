@@ -68,8 +68,10 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         // This is the intents file
         var formatted = mutableListOf<Pair<String,String>>()
         // This is only set up for a single entity per sentence. Likely will need adjustment
-        var cleanedTokenList = mutableListOf<String>()
+
         intentsFile.forEachLine { line ->
+            // This is so it's a clean list each time
+            var cleanedTokenList = mutableListOf<String>()
             //  This may not be the best place to declare this
             var entityPair: Pair<String,Int>? = null
             // Split it in to tokens
@@ -103,6 +105,7 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
                 var entityFilename = loadEntityFile(entityPair.first)
                 Log.v("Entity filename: ${entityFilename.toString()}")
                 if (entityFilename != null) {
+                    // load the entity file
                     var entityFile = File(cacheDir,entityFilename)
                     // for every entity word in the file
                     entityFile.forEachLine { entity ->
