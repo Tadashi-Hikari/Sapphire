@@ -37,7 +37,7 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         when(intent?.action){
             "action.athena.TEST" -> testCode(intent)
             "action.athena.TEST_INPUT" -> testInput(intent)
-            else -> null
+            else -> Log.v("Guess this intent does nothing")
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -59,8 +59,14 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
     }
 
     fun testInput(intent: Intent){
-        var catcher = classifier.classify(intent.getStringExtra("text"))
-        Log.v("Result ${catcher}")
+        var intentText = intent.getStringExtra("text")!!
+        Log.v("Intent had text: ${intentText}")
+        var tempFile = File(cacheDir, "tempFile")
+        tempFile.writeText(intentText)
+
+        //var tokens = intentText.split(" ")
+        var catcher = classifier.classifyAndWriteAnswers(tempFile.canonicalPath)
+        Log.v("Result: ${catcher}")
     }
 
     // This should definitely be recursive

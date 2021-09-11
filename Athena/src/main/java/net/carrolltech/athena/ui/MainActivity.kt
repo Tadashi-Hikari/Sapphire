@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.service.voice.VoiceInteractionSession
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import net.carrolltech.athena.R
@@ -52,8 +53,12 @@ class MainActivity: Activity()
         startService(testIntent)
     }
 
-    fun sendTestMessage(){
-
+    fun sendTestMessage(view: View){
+        var editText= findViewById<EditText>(R.id.testInput)
+        var testTextIntent = Intent().setAction("action.athena.TEST_INPUT")
+        testTextIntent.setClassName(this,"net.carrolltech.athena.processor.TemporaryEntityExtractor")
+        testTextIntent.putExtra("text",editText.text.toString())
+        startService(testTextIntent)
     }
 
     // This will likely need to be more dynamic. This is just checking for permissions

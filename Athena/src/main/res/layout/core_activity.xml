@@ -54,18 +54,24 @@
 
             <EditText
                 android:id="@+id/testInput"
+                style="@style/Widget.AppCompat.EditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Name" />
+                android:inputType="text"
+                android:isScrollContainer="false"
+                android:singleLine="true"
+                android:text="wake me up at eight"
+                android:textColor="#000000"
+                android:visibility="visible" />
 
             <Button
                 android:id="@+id/testInputButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="sendTestMessage"
                 android:text="Send Input" />
         </LinearLayout>
 

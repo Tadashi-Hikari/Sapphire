@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="Athena/src/main/res/layout/activity_settings.xml" value="0.2" />
         <entry key="Athena/src/main/res/layout/core_activity.xml" value="0.33" />
       </map>
     </option>
