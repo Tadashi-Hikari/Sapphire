@@ -65,16 +65,16 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         tempFile.writeText(intentText)
 
         //var tokens = intentText.split(" ")
-        var catcher = classifier.classifyAndWriteAnswers(tempFile.canonicalPath)
-        Log.v("Result: ${catcher}")
+        var catcher = classifier.classifyAndWriteAnswers(tempFile.canonicalPath,classifier.plainTextReaderAndWriter(),true)
+        Log.v("Result: ${catcher.asList()}")
     }
 
-    // This should definitely be recursive
     fun convertIntentToEntityTrainingFile(intentsFile: File, entityFiles: List<String>): File{
         // This is the intents file
         var formatted = mutableListOf<Pair<String,String>>()
         // This is only set up for a single entity per sentence. Likely will need adjustment
 
+        //For every sentence, expand the sentence
         intentsFile.forEachLine { line ->
             // This is so it's a clean list each time
             var cleanedTokenList = mutableListOf<String>()
@@ -118,20 +118,34 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
                         //new records should be a copy of the prior sentence. Basically, the cleanedToken list
                         newRecords.set(index, Pair(entity, entityFilename.substringBefore(".")))
                         formatted.addAll(newRecords)
-
+                        // This adds a space to break up documents
+                        formatted.add(Pair("%%","%%"))
+                        Log.v("Added the %%")
                     }
                 }else{
                     Log.e("There doesn't seem to be an entity file for that entity")
                 }
+            }else{
+                for(token in cleanedTokenList){
+                    formatted.add(Pair(token,"O"))
+                }
+                // If there is not an entity in the sentence, add this to the file
+                formatted.add(Pair("%%","%%"))
+                Log.v("Added the %%")
             }
         }
 
         Log.v("Intents expanded")
         var outFile = File(cacheDir,"outfile")
         formatted.forEach { row ->
-            // This should write it in proper format.
-            Log.v("${row.first}\t${row.second}\n")
-            outFile.writeText("${row.first}\t${row.second}\n")
+            // This should write it in proper format. I need a space to break up documents
+            if((row.first == "%%")and(row.second == "%%")){
+                Log.v("Found %%. There should be a new line here")
+                outFile.appendText("\n")
+            }else{
+                Log.v("${row.first}\t${row.second}\n")
+                outFile.appendText("${row.first}\t${row.second}\n")
+            }
         }
         return outFile
     }
@@ -149,11 +163,9 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         return null
     }
 
-    fun trainClassifier(expandedIntents: File){
-        // This is a terrible variable name, but it's temporary
-        var filename = expandedIntents.canonicalPath
+    // These are defaults copied from https://nlp.stanford.edu/software/crf-faq.html
+    fun useDefaultProps(): Properties{
         var props = Properties()
-        // These are defaults copied from https://nlp.stanford.edu/software/crf-faq.html
         props.setProperty("UseClassFeature","true")
         props.setProperty("useWord","true")
         props.setProperty("useNGrams","true")
@@ -169,6 +181,25 @@ class TemporaryEntityExtractor: SapphireFrameworkService() {
         props.setProperty("useTypeySequences","true")
         props.setProperty("wordShape","chris2useLC")
         props.setProperty("useDisjunctive","true")
+        return props
+    }
+
+    fun useCustomProps(): Properties {
+        var props = Properties()
+        props.setProperty("useWord","true")
+        props.setProperty("useSequences","false")
+        //props.setProperty("useSum","true")
+        props.setProperty("useNB","true")
+        props.setProperty("usePrev","true")
+        props.setProperty("useNext","true")
+        return props
+    }
+
+    fun trainClassifier(expandedIntents: File){
+        // This is a terrible variable name, but it's temporary
+        var filename = expandedIntents.canonicalPath
+        var props = useDefaultProps()
+        //var props = useCustomProps()
 
         var reader = ColumnDocumentReaderAndWriter()
         // This just needs to be edited to read a two column document, rather than three column
