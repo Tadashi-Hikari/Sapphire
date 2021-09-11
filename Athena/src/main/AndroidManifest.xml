@@ -76,7 +76,5 @@
                 <action android:name="android.speech.RecognitionService"/>
             </intent-filter>
         </service>
-        <service android:name=".processor.TemporaryEntityExtractor">
-        </service>
     </application>
 </manifest>

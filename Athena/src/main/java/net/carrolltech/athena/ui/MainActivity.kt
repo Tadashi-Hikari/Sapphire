@@ -49,14 +49,14 @@ class MainActivity: Activity()
 
     fun testComponent(view: View){
         var testIntent = Intent().setAction("action.athena.TEST")
-        testIntent.setClassName(this,"net.carrolltech.athena.processor.TemporaryEntityExtractor")
+        testIntent.setClassName(this,"net.carrolltech.athena.processor.ProcessorEntityTrainingService")
         startService(testIntent)
     }
 
     fun sendTestMessage(view: View){
         var editText= findViewById<EditText>(R.id.testInput)
         var testTextIntent = Intent().setAction("action.athena.TEST_INPUT")
-        testTextIntent.setClassName(this,"net.carrolltech.athena.processor.TemporaryEntityExtractor")
+        testTextIntent.setClassName(this,"net.carrolltech.athena.processor.ProcessorEntityTrainingService")
         testTextIntent.putExtra("text",editText.text.toString())
         startService(testTextIntent)
     }
