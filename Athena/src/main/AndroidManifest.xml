@@ -82,5 +82,23 @@
         </service>
         <activity android:name=".tts.MainActivity">
         </activity>
+        <!--This bullshit. Android restricts the TTS to a single thread, which kills the TensorflowTTS
+        By moving it to its own process, I isolate it from the rest of the app, then send an intent to
+        the actual TTS service-->
+        <service android:name=".tts.tts.AthenaTextToSpeechService"
+            android:exported="true"
+            android:process=".ttsProxy">
+            <intent-filter>
+                <action android:name="android.intent.action.TTS_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.speech.tts"
+                android:resource="@xml/tts_engine">
+            </meta-data>
+        </service>
+        <service android:name=".tts.tts.AthenaTTSLanding"
+            android:exported="true">
+        </service>
     </application>
 </manifest>
