@@ -91,6 +91,7 @@ abstract class SapphireFrameworkService: Service() {
 	// This is for core to request data from a specific module
 	val ACTION_SAPPHIRE_TRAIN="assistant.framework.processor.action.TRAIN"
 	val ACTION_SAPPHIRE_INITIALIZE="assistant.framework.processor.action.INITIALIZE"
+	val ACTION_SAPPHIRE_SPEAK="assistant.framework.core.action.SPEAK"
 
 	// Work in progress
 	var ACTION_SAPPHIRE_DATA_TRANSFER = "ACTION_SAPPHIRE_DATA_TRANSFER"

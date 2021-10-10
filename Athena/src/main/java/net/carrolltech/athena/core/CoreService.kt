@@ -1,13 +1,10 @@
 package net.carrolltech.athena.core
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
-import android.os.Build
 import android.os.IBinder
+import android.speech.tts.TextToSpeech
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import net.carrolltech.athena.R
 import org.json.JSONObject
 import java.util.*
@@ -16,7 +13,15 @@ import java.util.*
  * For right now, this isn't even used by Athena. Android bypasses it completely
  */
 
-class CoreService: SapphireCoreService(){
+class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
+
+	var ttsInit = false
+	var textToSpeech: TextToSpeech? = null
+
+	override fun onInit(status: Int) {
+		ttsInit = true
+	}
+
 	//State variables
 	var initialized = false
 	// Oh God, this is the start of a registry. I hate it, and need to make it more 'unixy'
@@ -31,10 +36,16 @@ class CoreService: SapphireCoreService(){
 	// This holds the available modules. It's close to a registry, and I hate everything about it
 	var pendingIntentLedger = mutableMapOf<String,PendingIntent>()
 
+	override fun onCreate() {
+		super.onCreate()
+		textToSpeech = TextToSpeech(this,this)
+	}
+
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		//var passedIntent = cleanRoute(intent!!)
-		//sortMail(passedIntent)
-		Log.v("Started up")
+
+		Log.v("CoreService recieved an intent")
+		var passedIntent = cleanRoute(intent!!)
+		sortMail(passedIntent)
 
 		// I kind of hate this *so much more* than just using a variable in the framework
 		var intent = Intent().setClassName(this,resources.getString(R.string.processor_class))
@@ -54,7 +65,19 @@ class CoreService: SapphireCoreService(){
 				ACTION_SAPPHIRE_INITIALIZE -> startRegistrationService()
 				ACTION_SAPPHIRE_CORE_REGISTRATION_COMPLETE -> initialize(intent)
 				ACTION_SAPPHIRE_MODULE_REGISTER -> forwardRegistration(intent)
+				ACTION_SAPPHIRE_SPEAK -> speakToUser(intent)
 			}
+		}
+	}
+
+	fun speakToUser(intent: Intent){
+		if(ttsInit == true) {
+			textToSpeech!!.speak(
+				intent.getStringExtra("SPEAKING_PAYLOAD")!!,
+				TextToSpeech.QUEUE_FLUSH,
+				null,
+				null
+			)
 		}
 	}
 

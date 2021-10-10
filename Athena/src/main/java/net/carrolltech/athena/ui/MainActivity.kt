@@ -49,7 +49,7 @@ class MainActivity: Activity()
 
     fun testComponent(view: View){
         var testIntent = Intent().setAction("action.athena.TEST")
-        testIntent.setClassName(this,"net.carrolltech.athena.tts.MainActivity")
+        testIntent.setClassName(this,"net.carrolltech.athena.tts_service.MainActivity")
         startActivity(testIntent)
         //startService(testIntent)
     }
@@ -57,7 +57,7 @@ class MainActivity: Activity()
     fun sendTestMessage(view: View){
         var editText= findViewById<EditText>(R.id.testInput)
         var testTextIntent = Intent().setAction("action.athena.TEST_INPUT")
-        testTextIntent.setClassName(this,"net.carrolltech.athena.tts.SimpleTensorflowEngine")
+        testTextIntent.setClassName(this,"net.carrolltech.athena.tts_service.SimpleTensorflowEngine")
         testTextIntent.putExtra("text",editText.text.toString())
         startService(testTextIntent)
     }
