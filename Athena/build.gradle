@@ -16,7 +16,6 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -37,6 +36,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        mlModelBinding true
     }
     lintOptions {
         abortOnError false
@@ -56,6 +56,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -63,7 +64,8 @@ dependencies {
     implementation fileTree(dir: 'aars', include: ['*'])
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation files('libs/stanford-corenlp-4.1.0.jar')
-    implementation 'org.tensorflow:tensorflow-lite:2.4.0'
-    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:0.0.0-nightly'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite:+'
+    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:+'
+    implementation 'org.tensorflow:tensorflow-lite-support:+'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:+'
 }

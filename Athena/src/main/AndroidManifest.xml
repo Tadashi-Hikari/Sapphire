@@ -22,7 +22,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Athena">
+        android:theme="@style/Theme.Athena"
+        android:largeHeap="true">
         <activity android:name=".ui.SettingsActivity"/>
         <activity
             android:name=".ui.MainActivity"
@@ -79,9 +80,7 @@
                 <action android:name="android.speech.RecognitionService"/>
             </intent-filter>
         </service>
-        <service android:name=".tts.SimpleTensorflowEngine"
-            android:exported="true"
-            android:process=".tts">
-        </service>
+        <activity android:name=".tts.MainActivity">
+        </activity>
     </application>
 </manifest>
