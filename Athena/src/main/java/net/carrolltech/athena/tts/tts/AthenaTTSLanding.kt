@@ -31,7 +31,8 @@ class AthenaTTSLanding: SapphireFrameworkService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent!!.action == "on.the.backend") {
             if(ready == true) {
-                TtsManager.getInstance().speak("this is a test", speed, true)
+                var inputText = intent.getStringExtra("payload")
+                TtsManager.getInstance().speak(inputText, speed, true)
             }else{
                 queue = intent.getStringExtra("payload")!!
             }
