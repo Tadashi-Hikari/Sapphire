@@ -75,6 +75,9 @@ class CoreService: SapphireCoreService(){
 	fun defaultPath(intent: Intent){
 		// Send to processor
 		// send to chosen intent
+		if(intent.hasExtra("ENTITIES")){
+			Log.d(intent.getStringArrayListExtra("ENTITIES").toString())
+		}
 	}
 
 	fun initialize(intent: Intent){

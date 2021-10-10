@@ -39,6 +39,8 @@ class ProcessorService: SapphireFrameworkService(){
                     var utteranceFile = File(cacheDir,"utteranceFile")
                     utteranceFile.writeText(utterance!!)
                     var catcher = entityClassifier.classifyAndWriteAnswers(utteranceFile.canonicalPath,entityClassifier.plainTextReaderAndWriter(),true)
+                    var entityList = cleanEntityList(catcher.toString())
+                    Log.v("Cleaned entity list: ${entityList.toString()}")
                     // This is specific to how CoreNLP works
                     var datumToClassify = intentClassifier.makeDatumFromLine("none\t${utterance}")
                     // Can these two be combined, or done at the same time?
@@ -54,7 +56,7 @@ class ProcessorService: SapphireFrameworkService(){
                         Log.i("Text does not match a class. Using default")
                         outgoingIntent.putExtra(ROUTE, "DEFAULT")
                     }
-
+                    outgoingIntent.putStringArrayListExtra("ENTITIES",entityList)
                     outgoingIntent.putExtra(MESSAGE, utterance)
                     startService(outgoingIntent)
                 }else{
@@ -77,6 +79,18 @@ class ProcessorService: SapphireFrameworkService(){
         }else{
             return ColumnDataClassifier.getClassifier(classifierFile.canonicalPath)
         }
+    }
+
+    fun cleanEntityList(entityCatcher: String): ArrayList<String>{
+        var entityList = mutableListOf<String>()
+        var tokens = entityCatcher.split(" ")
+        for(token in tokens){
+            var splitToken = token.split("\\")
+            if(splitToken[1] != "O"){
+                entityList.add(splitToken[0])
+            }
+        }
+        return entityList as ArrayList<String>
     }
 
     fun trainEntityClassifier(){

@@ -76,5 +76,8 @@
                 <action android:name="android.speech.RecognitionService"/>
             </intent-filter>
         </service>
+        <service android:name=".tts.TextToSpeechService"
+            android:exported="true">
+        </service>
     </application>
 </manifest>
