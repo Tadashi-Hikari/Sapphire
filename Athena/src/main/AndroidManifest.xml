@@ -11,6 +11,9 @@
         <intent>
             <action android:name="action.athena.skill.INITIALIZE" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE"/>
+        </intent>
     </queries>
 
     <application
@@ -76,8 +79,9 @@
                 <action android:name="android.speech.RecognitionService"/>
             </intent-filter>
         </service>
-        <service android:name=".tts.TextToSpeechService"
-            android:exported="true">
+        <service android:name=".tts.SimpleTensorflowEngine"
+            android:exported="true"
+            android:process=".tts">
         </service>
     </application>
 </manifest>

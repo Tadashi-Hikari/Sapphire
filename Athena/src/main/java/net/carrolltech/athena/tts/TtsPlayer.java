@@ -1,4 +1,4 @@
-package net.carrolltech.athena.tts.tts;
+package net.carrolltech.athena.tts;
 
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
@@ -6,14 +6,14 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
 
-import com.tensorspeech.tensorflowtts.utils.ThreadPoolManager;
-
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author {@link "mailto:xuefeng.ding@outlook.com" "Xuefeng Ding"}
  * Created 2020-07-20 18:22
  */
+
+// I cut out some of the threading stuff. We'll see if it works
 class TtsPlayer {
     private static final String TAG = "TtsPlayer";
 
@@ -42,24 +42,19 @@ class TtsPlayer {
         );
         mAudioTrack.play();
 
-        ThreadPoolManager.getInstance().getSingleExecutor("audio").execute(() -> {
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                try {
-                    mCurrentAudioData = mAudioQueue.take();
-                    Log.d(TAG, "playing: " + mCurrentAudioData.text);
-                    int index = 0;
-                    while (index < mCurrentAudioData.audio.length && !mCurrentAudioData.isInterrupt) {
-                        int buffer = Math.min(BUFFER_SIZE, mCurrentAudioData.audio.length - index);
-                        mAudioTrack.write(mCurrentAudioData.audio, index, buffer, AudioTrack.WRITE_BLOCKING);
-                        index += BUFFER_SIZE;
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Exception: ", e);
-                }
+        try {
+            mCurrentAudioData = mAudioQueue.take();
+            Log.d(TAG, "playing: " + mCurrentAudioData.text);
+            int index = 0;
+            while (index < mCurrentAudioData.audio.length && !mCurrentAudioData.isInterrupt) {
+                int buffer = Math.min(BUFFER_SIZE, mCurrentAudioData.audio.length - index);
+                mAudioTrack.write(mCurrentAudioData.audio, index, buffer, AudioTrack.WRITE_BLOCKING);
+                index += BUFFER_SIZE;
             }
-        });
-    }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception: ", e);
+        }
+    };
 
     void play(AudioData audioData) {
         Log.d(TAG, "add audio data to queue: " + audioData.text);

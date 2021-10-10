@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import net.carrolltech.athena.R
+import org.json.JSONObject
 import java.util.*
 
 /**
@@ -18,6 +19,8 @@ import java.util.*
 class CoreService: SapphireCoreService(){
 	//State variables
 	var initialized = false
+	// Oh God, this is the start of a registry. I hate it, and need to make it more 'unixy'
+	var state = JSONObject()
 
 	// This should probably be looked at more
 	private var connections: LinkedList<Pair<String, Connection>> = LinkedList()
