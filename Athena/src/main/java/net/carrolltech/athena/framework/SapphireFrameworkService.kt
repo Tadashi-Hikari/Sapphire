@@ -8,6 +8,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStreamReader
 
+/***
+ * This is supposed to be a service that can be used to make the development of new modules pretty
+ * painless. It mostly contains strings for messaging w/in the framework, and a few convenience
+ * functions
+ */
+
 abstract class SapphireFrameworkService: Service() {
 	var CLASS_NAME = this.javaClass.name
 
@@ -148,7 +154,8 @@ abstract class SapphireFrameworkService: Service() {
 		sendBroadcast(notifyIntent)
 	}
 
-	fun dispatchSapphireServiceFromCore(intent: Intent){
+	// I need this to do my bound stuff, cause I'm lazy and don't want to do it a ton
+	fun startSapphireService(intent: Intent){
 		var updatedIntent = Intent(intent)
 		updatedIntent = validatePostage(intent)
 		startService(updatedIntent)

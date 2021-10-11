@@ -6,6 +6,10 @@ import android.os.SystemClock
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import org.json.JSONObject
 
+/***
+ * This just holds a bunch of utility things that I will use across services in the Core module
+ */
+
 abstract class SapphireCoreService: SapphireFrameworkService(){
 
 	private val CONFIG = "sample-core-config.conf"

@@ -1,16 +1,24 @@
 package net.carrolltech.athena.core
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
+import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import net.carrolltech.athena.R
+import net.carrolltech.athena.ui.MainActivity
 import org.json.JSONObject
 import java.util.*
 
-/**
- * For right now, this isn't even used by Athena. Android bypasses it completely
+/***
+ * Honestly, I think I wrote some trash code here, but I'm just hacking it together to get it
+ * figured out for now. I want to move away from treating things like a registry, but I need
+ * to read a little bit more on design before I figure out what is the best way to go
  */
 
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
@@ -18,21 +26,19 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	var ttsInit = false
 	var textToSpeech: TextToSpeech? = null
 
+	// I don't like this either
 	override fun onInit(status: Int) {
 		ttsInit = true
 	}
 
 	//State variables
 	var initialized = false
-	// Oh God, this is the start of a registry. I hate it, and need to make it more 'unixy'
+	// Oh God, this is the start of a registry. I hate it, and need to make it more 'unix-y'
 	var state = JSONObject()
-
 	// This should probably be looked at more
 	private var connections: LinkedList<Pair<String, Connection>> = LinkedList()
-
 	// and this. Though this is kind of a 'fake' connection
 	var connection = Connection()
-
 	// This holds the available modules. It's close to a registry, and I hate everything about it
 	var pendingIntentLedger = mutableMapOf<String,PendingIntent>()
 
@@ -42,14 +48,10 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-		Log.v("CoreService recieved an intent")
+		Log.v("CoreService received an intent")
 		var passedIntent = cleanRoute(intent!!)
 		sortMail(passedIntent)
 
-		// I kind of hate this *so much more* than just using a variable in the framework
-		var intent = Intent().setClassName(this,resources.getString(R.string.processor_class))
-		startService(intent)
 		// This may need to be moved, if I am to do things in the background
 		return super.onStartCommand(intent, flags, startId)
 	}
@@ -57,7 +59,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	// What is the nervous systems function called
 	fun sortMail(intent: Intent) {
 		Log.i("Sorting intent")
-		// Looking for a better mental abstraction. These actions are more akin to heartbeats, digestion, etc. Autonomous actions, but unchangeable
+7
 		// Handle actions here
 		when (initialized) {
 			true -> defaultPath(intent)
@@ -78,6 +80,8 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				null,
 				null
 			)
+		}else{
+			startService(intent)
 		}
 	}
 
@@ -99,7 +103,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	fun defaultPath(intent: Intent){
-		// Send to processor
+		// Send to processor. How should I track where it is in the path?
 		// send to chosen intent
 		if(intent.hasExtra("ENTITIES")){
 			Log.d(intent.getStringArrayListExtra("ENTITIES").toString())
@@ -112,7 +116,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		for(key in intent.getStringArrayListExtra(DATA_KEYS)!!){
 			Log.d("Offloading PendingIntent for ${key}")
 			// Whelp, just load it up...
-			pendingIntentLedger.put(key,intent.getParcelableExtra(key)!!)
+			//pendingIntentLedger.put(key,intent.getParcelableExtra(key)!!)
 		}
 		startKaldiService()
 		initialized = true
@@ -124,12 +128,20 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	// Run through the registration process
+	/**
 	fun startRegistrationService(){
 		Log.i("Starting registration service")
 		var registrationIntent = Intent().setClassName(this.packageName,"${this.packageName}.CoreRegistrationService")
 		registrationIntent.setAction(ACTION_SAPPHIRE_INITIALIZE)
 		Log.v("starting service ${"${this.packageName}.CoreRegistrationService"}")
 		startService(registrationIntent)
+	}
+	*/
+
+	// This is just a temporary test
+	fun startRegistrationService(){
+		var intent = Intent().setClassName(this,"net.carrolltech.athenaalarmskill.simpleAlarmService")
+
 	}
 
 	override fun onDestroy() {

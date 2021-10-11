@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Athena">
         <service
-            android:name=".simpleAlarmService"
+            android:name=".AlarmService"
             android:exported="true">
             <intent-filter>
                 <action android:name="action.athena.skill.INITIALIZE"/>

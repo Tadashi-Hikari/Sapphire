@@ -14,6 +14,11 @@ import androidx.core.app.NotificationCompat
 import net.carrolltech.athena.core.SapphireCoreService
 import java.util.*
 
+/***
+ * The more I am looking at this, the more I am wondering why it is here. I think I just included
+ * it from the Sapphire Assistant Framework for reference while rewriting CoreService
+ */
+
 class FrameworkCoreService: SapphireCoreService(){
     //State variables
     var initialized = false
@@ -111,12 +116,8 @@ class FrameworkCoreService: SapphireCoreService(){
             // Whelp, just load it up...
             pendingIntentLedger.put(key,intent.getParcelableExtra(key)!!)
         }
-        startKaldiService()
+        //startKaldiService()
         initialized = true
-    }
-
-    fun startKaldiService(){
-
     }
 
     // Run through the registration process
@@ -126,11 +127,6 @@ class FrameworkCoreService: SapphireCoreService(){
         registrationIntent.setAction(ACTION_SAPPHIRE_INITIALIZE)
         Log.v("starting service ${"${this.packageName}.CoreRegistrationService"}")
         startService(registrationIntent)
-    }
-
-    override fun onDestroy() {
-        notificationManager.cancel(1337)
-        super.onDestroy()
     }
 
     // The bound connection. The core attaches to each service as a client, tying them to cores lifecycle
@@ -146,5 +142,10 @@ class FrameworkCoreService: SapphireCoreService(){
         override fun onServiceDisconnected(name: ComponentName?) {
             Log.i("Service disconnected")
         }
+    }
+
+    override fun onDestroy() {
+        notificationManager.cancel(1337)
+        super.onDestroy()
     }
 }

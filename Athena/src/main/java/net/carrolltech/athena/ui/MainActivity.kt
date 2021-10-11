@@ -5,11 +5,13 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.service.voice.VoiceInteractionSession
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import net.carrolltech.athena.R
 import android.os.Bundle as Bundle
@@ -44,7 +46,13 @@ class MainActivity: Activity()
     fun startAssistant(view: View){
         var intent = Intent().setAction("assistant.framework.processor.action.INITIALIZE")
         intent.setClassName(this,"net.carrolltech.athena.core.CoreService")
-        startService(intent)
+
+        // This is to keep it compatible with Android 7.1
+        if(Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(intent)
+        }else{
+            startService(intent)
+        }
     }
 
     fun testComponent(view: View){

@@ -5,6 +5,16 @@ import android.content.Intent
 import android.content.pm.PackageManager.GET_RESOLVED_FILTER
 import java.lang.Exception
 
+/***
+ * This service handles the registration for all compatable modules on the device, at least the ones
+ * it's designed for (I intent to make it compatable w/ Google Assistant apps, but that's for another
+ * day). The primary thing that needs to be registered is pre-designed pipelines through the assistant.
+ * For instance, an generic utterance *should* go from the STT module, to the processor, and then on
+ * to it's intended target. However, a user might want to interject another module or route picture
+ * data, etc. It's meant to allow a flexible flow of data, and data collection on the fly. This also
+ * collects essential PendingIntents for the CoreService, and registers services needed at boot.
+ */
+
 class CoreRegistrationService: SapphireCoreService(){
 	var sapphireModuleStack = mutableListOf<Intent>()
 	var dataKey = mutableListOf<String>()

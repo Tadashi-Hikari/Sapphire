@@ -6,7 +6,12 @@ import android.os.IBinder
 
 class WeatherService : Service() {
 
-    override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+    override fun onBind(intent: Intent): IBinder?{
+        when(intent?.action){
+
+            null -> stopSelf()
+        }
+
+        return null
     }
 }

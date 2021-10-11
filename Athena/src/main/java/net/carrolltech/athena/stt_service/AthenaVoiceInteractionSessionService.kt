@@ -29,9 +29,9 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         recognizer.startListening()
-        Log.v(this.javaClass.simpleName,"I am listening, Lan")
         var ttsIntent = Intent().setAction("assistant.framework.core.action.SPEAK")
-        ttsIntent.putExtra("SPEAKING_PAYLOAD", "Alright, Chris. I am listening")
+        // I may have to personally retrain the tensorflow model, but I just can't do it on my laptop right now
+        ttsIntent.putExtra("SPEAKING_PAYLOAD", "Hello there Khristopher. I am Sapphire, what can I do for you?")
         ttsIntent.setClassName(this,"net.carrolltech.athena.core.CoreService")
         startService(ttsIntent)
         return super.onStartCommand(intent, flags, startId)

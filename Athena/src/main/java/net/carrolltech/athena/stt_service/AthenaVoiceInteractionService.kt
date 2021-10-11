@@ -51,8 +51,7 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
     override fun onResult(hypothesis: String) {
         var jsonUtterance = JSONObject(hypothesis)
         // Maybe I want to move this to onPartialResult, so it starts listening right away
-        if("mega man" in jsonUtterance.getString("text")) {
-            Log.v(this.javaClass.name, "What can I do for you Lan")
+        if("sapphire" in jsonUtterance.getString("text")) {
             var intent = Intent().setClassName(this,"${packageName}.stt_service.AthenaVoiceInteractionSessionService")
             startService(intent)
         }
