@@ -72,6 +72,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 	}
 
+	// This needs a better naming scheme
 	fun speakToUser(intent: Intent){
 		if(ttsInit == true) {
 			textToSpeech!!.speak(
@@ -110,6 +111,12 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 	}
 
+	// This will be used to start those bound modules
+	fun sendToExternalModule(){
+		var outgoingIntent = Intent()
+		bindService(outgoingIntent,connection,0)
+	}
+
 	fun initialize(intent: Intent){
 		Log.v("Initializing")
 		// Might want to try/catch this
@@ -128,20 +135,12 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	// Run through the registration process
-	/**
 	fun startRegistrationService(){
 		Log.i("Starting registration service")
 		var registrationIntent = Intent().setClassName(this.packageName,"${this.packageName}.CoreRegistrationService")
 		registrationIntent.setAction(ACTION_SAPPHIRE_INITIALIZE)
 		Log.v("starting service ${"${this.packageName}.CoreRegistrationService"}")
 		startService(registrationIntent)
-	}
-	*/
-
-	// This is just a temporary test
-	fun startRegistrationService(){
-		var intent = Intent().setClassName(this,"net.carrolltech.athenaalarmskill.simpleAlarmService")
-
 	}
 
 	override fun onDestroy() {

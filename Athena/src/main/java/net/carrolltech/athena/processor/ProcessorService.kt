@@ -1,6 +1,7 @@
 package net.carrolltech.athena.processor
 
 import android.content.Intent
+import android.os.IBinder
 import android.view.View
 import edu.stanford.nlp.classify.ColumnDataClassifier
 import edu.stanford.nlp.ie.crf.CRFClassifier
@@ -8,8 +9,16 @@ import edu.stanford.nlp.ling.CoreLabel
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.File
 
+/***
+ * This module exists to coordinate the usage and training of the intent and entity classifiers.
+ * It is possible they may be used independently, need retraining, or potentially could become
+ * a service for other modules (including loading custom classifiers), so this landing helps
+ * to coordinate that
+ */
+
 class ProcessorService: SapphireFrameworkService(){
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    // I don't see any reason why this needs a PendingIntent over just a bound service
+    override fun onBind(intent: Intent?): IBinder? {
         try{
             Log.v("ProcessorCentralService started")
             when {
@@ -19,7 +28,9 @@ class ProcessorService: SapphireFrameworkService(){
             Log.d("There was an intent error w/ the processor")
            exception.printStackTrace()
         }
-        return super.onStartCommand(intent, flags, startId)
+
+        // Is this an issue, that the stuff here could be long running?
+        return null
     }
 
     // This should be renamed, definitely

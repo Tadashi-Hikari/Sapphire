@@ -23,6 +23,7 @@ import java.lang.StringBuilder
 import java.util.*
 
 class ProcessorEntityTrainingService: SapphireFrameworkService() {
+    // These should have been moved into SapphireFrameworkService....
     var INITIALIZE = "action.athena.skill.INITIALIZE"
     var INTENT = "intent"
     var ENTITY = "entity"

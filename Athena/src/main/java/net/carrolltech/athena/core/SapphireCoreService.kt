@@ -12,6 +12,7 @@ import org.json.JSONObject
 
 abstract class SapphireCoreService: SapphireFrameworkService(){
 
+	// This should all be moved into SapphireFrameworkService()
 	private val CONFIG = "sample-core-config.conf"
 
 	private var REGISTRATION_TABLE = "registration.tbl"

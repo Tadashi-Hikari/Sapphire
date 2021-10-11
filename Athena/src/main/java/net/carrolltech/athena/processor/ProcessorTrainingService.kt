@@ -12,6 +12,7 @@ import java.lang.Exception
 import java.util.*
 
 class ProcessorTrainingService: SapphireFrameworkService(){
+    // This should definitely be moved in to SapphireFrameworkService()
     var INITIALIZE = "action.athena.skill.INITIALIZE"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
