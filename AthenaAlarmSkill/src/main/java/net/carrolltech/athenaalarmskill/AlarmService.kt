@@ -49,11 +49,14 @@ class AlarmService: Service(){
         alarmIntent.putExtra(AlarmClock.EXTRA_MINUTES, minutes)
         alarmIntent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
         alarmIntent.putExtra(AlarmClock.EXTRA_MESSAGE, "This alarm was set by your assistant, Athena")
-        startService(alarmIntent)
+       //startService(alarmIntent)
 
         // I can send this back to the TTS service, to notify me
         Log.v(this.javaClass.name,"Alarm set for ${hour}:${minutes}")
         //speak(time)
+        var speakIntent = Intent().setClassName(this,"net.carrolltech.athena.CoreService")
+        speakIntent.putExtra("SPEAKING_PAYLOAD","Alright, an alarm has been set for you")
+        startService(speakIntent)
     }
 
     fun readAlarm(intent: Intent){}

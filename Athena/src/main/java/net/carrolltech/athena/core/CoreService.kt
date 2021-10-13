@@ -5,6 +5,8 @@ import android.content.*
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
+import net.carrolltech.athena.framework.SapphireFrameworkService
+import net.carrolltech.athena.framework.SapphireUtils
 import org.json.JSONObject
 import java.util.*
 
@@ -79,7 +81,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				null
 			)
 		}else{
-			startService(intent)
+			Log.d("There was an error getting the system to speak")
 		}
 	}
 
@@ -114,12 +116,14 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	fun pathProcessing(intent: Intent){
-		var path = checkID(intent.getStringExtra("ID")!!)
-		unbindPriorService("service")
+		intent.setClassName(this,"net.carrolltech.athena.natural_language_processor.ProcessorService")
+		Log.d("Intent died in pathProcessing")
+		//var path = checkID(intent.getStringExtra("ID")!!)
+		//unbindPriorService("service")
 		// send to chosen intent
-		if(intent.hasExtra("ENTITIES")){
-			Log.d(intent.getStringArrayListExtra("ENTITIES").toString())
-		}
+		//if(intent.hasExtra("ENTITIES")){
+		//	Log.d(intent.getStringArrayListExtra("ENTITIES").toString())
+		//}
 	}
 
 	// This will be used to start those bound modules
@@ -128,6 +132,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		bindService(outgoingIntent,connection,0)
 	}
 
+	// This isn't designed to initialize from being set as the assistant. I need to change that
 	fun initialize(intent: Intent){
 		Log.v("Initializing")
 		// Might want to try/catch this
@@ -136,15 +141,17 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 			// Whelp, just load it up...
 			//pendingIntentLedger.put(key,intent.getParcelableExtra(key)!!)
 		}
-		// Start the speec to text recognition
-		startKaldiService()
+		//This needs to be update for Android Assistant compatiblity
+		//startKaldiService()
 		// Create a textToSpeech reference. Is this bad for the battery?
 		textToSpeech = TextToSpeech(this,this)
 		initialized = true
 	}
 
-	// Athen can expect this to exist. The Sapphire Framework cannot
+	// Athena can expect this to exist. The Sapphire Framework cannot
 	fun startKaldiService(){
+		// Check if service is running first
+		// This is no longer a thing, since it's been renamed for the Android Assistant
 		var intent = Intent().setClassName(this,"${packageName}.stt.KaliService")
 		startService(intent)
 	}
@@ -152,9 +159,9 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	// Run through the registration process
 	fun startRegistrationService(){
 		Log.i("Starting registration service")
-		var registrationIntent = Intent().setClassName(this.packageName,"${this.packageName}.CoreRegistrationService")
+		var registrationIntent = Intent().setClassName(this,SapphireUtils().REGISTRATION_SERVICE)
 		registrationIntent.setAction(ACTION_SAPPHIRE_INITIALIZE)
-		Log.v("starting service ${"${this.packageName}.CoreRegistrationService"}")
+		Log.v("starting registration service")
 		startService(registrationIntent)
 	}
 

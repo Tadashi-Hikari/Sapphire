@@ -9,7 +9,9 @@ import java.io.File
 import java.lang.Exception
 
 /***
- * This is all of the code for the actual PocketSphinx recognizer
+ * This is all of the code for the actual PocketSphinx recognizer. I've bounced it from the required
+ * Android services (for an assistant). I don't remember if it was required or if I just haven't merged
+ * the two code sets yet. I'll need to look in to it more
  */
 
 class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionService(){

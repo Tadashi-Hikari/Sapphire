@@ -7,6 +7,7 @@ import java.io.File
 
 /**
  * The *vast* majority of this code is *hella* redundant....
+ * I think this is required to make this a standalone STT service, not just an assistant
  */
 
 class AthenaRecognitionService: RecognitionListener, RecognitionService(){

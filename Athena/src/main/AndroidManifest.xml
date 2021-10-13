@@ -100,5 +100,8 @@
         <service android:name=".tts_service.tts.AthenaTTSLanding"
             android:exported="true">
         </service>
+        <service android:name=".core.CoreRegistrationService"
+            android:exported="true">
+        </service>
     </application>
 </manifest>

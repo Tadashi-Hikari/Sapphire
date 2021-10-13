@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import net.carrolltech.athena.R
+import net.carrolltech.athena.framework.SapphireUtils
 import android.os.Bundle as Bundle
 
 
@@ -44,12 +45,12 @@ class MainActivity: Activity()
     }
 
     fun startAssistant(view: View){
-        var intent = Intent().setAction("assistant.framework.processor.action.INITIALIZE")
-        intent.setClassName(this,"net.carrolltech.athena.core.CoreService")
+        var intent = Intent().setAction(SapphireUtils().ACTION_SAPPHIRE_INITIALIZE)
+        intent.setClassName(this,SapphireUtils().CORE_SERVICE)
 
         // This is to keep it compatible with Android 7.1
         if(Build.VERSION.SDK_INT >= 26) {
-            startForegroundService(intent)
+            startService(intent)
         }else{
             startService(intent)
         }
@@ -57,7 +58,7 @@ class MainActivity: Activity()
 
     fun testComponent(view: View){
         var testIntent = Intent().setAction("action.athena.TEST")
-        testIntent.setClassName(this,"net.carrolltech.athena.tts_service.MainActivity")
+        testIntent.setClassName(this,SapphireUtils().MAIN_ACTIVITY)
         startActivity(testIntent)
         //startService(testIntent)
     }

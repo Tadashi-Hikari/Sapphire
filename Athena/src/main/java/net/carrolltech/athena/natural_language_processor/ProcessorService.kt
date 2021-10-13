@@ -72,6 +72,7 @@ class ProcessorService: SapphireFrameworkService(){
                     }
                     outgoingIntent.putStringArrayListExtra("ENTITIES",entityList)
                     outgoingIntent.putExtra(MESSAGE, utterance)
+                    outgoingIntent.setClassName(this,"net.carrolltech.athenaalarmskill.simpleAlarmService")
                     startService(outgoingIntent)
                 }else{
                     stopSelf()
