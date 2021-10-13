@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.SystemClock
 import net.carrolltech.athena.framework.SapphireFrameworkService
+import net.carrolltech.athena.framework.SapphireUtils
 import org.json.JSONObject
 
 /***
@@ -23,15 +24,15 @@ abstract class SapphireCoreService: SapphireFrameworkService(){
 
 	// Hmm.... This is close to just passthrough
 	fun passthroughService(intent: Intent){
-		var postage = intent.getStringExtra(POSTAGE)!!
+		var postage = intent.getStringExtra(SapphireUtils().POSTAGE)!!
 		postage = validatePostage(postage)
-		intent.putExtra(POSTAGE,postage)
+		intent.putExtra(SapphireUtils().POSTAGE,postage)
 	}
 
 	fun cleanRoute(intent: Intent):Intent{
-		if(intent.hasExtra(ROUTE)){
-			Log.v("Current ROUTE: ${intent.getStringExtra(ROUTE)}")
-			var modules = intent.getStringExtra(ROUTE)!!.split(",")
+		if(intent.hasExtra(SapphireUtils().ROUTE)){
+			Log.v("Current ROUTE: ${intent.getStringExtra(SapphireUtils().ROUTE)}")
+			var modules = intent.getStringExtra(SapphireUtils().ROUTE)!!.split(",")
 			var newRoute = ""
 			for(module in modules){
 				Log.v("Checking module ${module}")
@@ -43,7 +44,7 @@ abstract class SapphireCoreService: SapphireFrameworkService(){
 				}
 			}
 			Log.v("New ROUTE: ${newRoute}")
-			intent.putExtra(ROUTE,newRoute)
+			intent.putExtra(SapphireUtils().ROUTE,newRoute)
 		}
 		return intent
 	}

@@ -6,6 +6,7 @@ import edu.stanford.nlp.classify.ColumnDataClassifier
 import edu.stanford.nlp.ie.crf.CRFClassifier
 import edu.stanford.nlp.ling.CoreLabel
 import net.carrolltech.athena.framework.SapphireFrameworkService
+import net.carrolltech.athena.framework.SapphireUtils
 import java.io.File
 
 /***
@@ -36,7 +37,7 @@ class ProcessorService: SapphireFrameworkService(){
     // This is handling running both things concurrently. It could probably be more elegant
     // it looks hacked together
     fun process(intent: Intent?){
-        var utterance = intent!!.getStringExtra(MESSAGE)
+        var utterance = intent!!.getStringExtra(SapphireUtils().MESSAGE)
         var outgoingIntent = Intent()
 
         try{
@@ -65,13 +66,13 @@ class ProcessorService: SapphireFrameworkService(){
                     if (classifiedScores.getCount(classifiedDatum) >= .6) {
                         Log.i("Text matches class ${classifiedDatum}")
                         TimeDateConverter().testing("something")
-                        outgoingIntent.putExtra(ROUTE, classifiedDatum)
+                        outgoingIntent.putExtra(SapphireUtils().ROUTE, classifiedDatum)
                     } else {
                         Log.i("Text does not match a class. Using default")
-                        outgoingIntent.putExtra(ROUTE, "DEFAULT")
+                        outgoingIntent.putExtra(SapphireUtils().ROUTE, "DEFAULT")
                     }
                     outgoingIntent.putStringArrayListExtra("ENTITIES",entityList)
-                    outgoingIntent.putExtra(MESSAGE, utterance)
+                    outgoingIntent.putExtra(SapphireUtils().MESSAGE, utterance)
                     outgoingIntent.setClassName(this,"net.carrolltech.athenaalarmskill.simpleAlarmService")
                     startService(outgoingIntent)
                 }else{

@@ -14,46 +14,46 @@ abstract class SapphireFrameworkRegistrationService: SapphireFrameworkService(){
 
 	// I am thinknig this should actually be a JSONObject
 	fun registerRouteInformation(intent: Intent, route: String): Intent{
-		intent.putExtra(ROUTE,route)
+		intent.putExtra(SapphireUtils().ROUTE,route)
 		return intent
 	}
 
 	fun registerVersion(intent: Intent, version: String): Intent{
-		intent.putExtra(MODULE_VERSION,version)
+		intent.putExtra(SapphireUtils().MODULE_VERSION,version)
 		return intent
 	}
 
 	fun registerModuleType(intent: Intent, type: String): Intent{
-		intent.putExtra(MODULE_TYPE, type)
+		intent.putExtra(SapphireUtils().MODULE_TYPE, type)
 		return intent
 	}
 
 	fun version(intent: Intent, version: String): Intent{
-		intent.putExtra(MODULE_VERSION,version)
+		intent.putExtra(SapphireUtils().MODULE_VERSION,version)
 		return intent
 	}
 
 	fun registerData(intent: Intent, filenames: ArrayList<String>): Intent{
-		intent.putStringArrayListExtra(DATA_KEYS,filenames)
+		intent.putStringArrayListExtra(SapphireUtils().DATA_KEYS,filenames)
 		return intent
 	}
 
 	fun returnToCore(intent: Intent){
 		intent.setClassName(this,"com.example.sapphireassistantframework.CoreService")
-		intent.removeExtra(FROM)
+		intent.removeExtra(SapphireUtils().FROM)
 		startService(intent)
 	}
 
 	open fun registerModule(intent: Intent){
 		// This needs to not be hardcoded. I can get the info from POSTAGE
 		intent.setClassName("com.example.sapphireassistantframework","com.example.sapphireassistantframework.CoreService")
-		intent.removeExtra(FROM)
+		intent.removeExtra(SapphireUtils().FROM)
 		// This is now done by me, but I could probably slim it down even more....
-		intent.putExtra(MODULE_PACKAGE,PACKAGE_NAME)
-		intent.putExtra(MODULE_CLASS,CLASS_NAME)
+		intent.putExtra(SapphireUtils().MODULE_PACKAGE,PACKAGE_NAME)
+		intent.putExtra(SapphireUtils().MODULE_CLASS,CLASS_NAME)
 
 		intent.fillIn(landingFunction(),0)
-		intent.setAction(ACTION_SAPPHIRE_MODULE_REGISTER)
+		intent.setAction(SapphireUtils().ACTION_SAPPHIRE_MODULE_REGISTER)
 		startService(intent)
 	}
 

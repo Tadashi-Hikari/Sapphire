@@ -6,6 +6,9 @@ class SapphireUtils{
     val PROCESSOR_SERVICE="net.carrolltech.athena.natural_language_processor.ProcessorService"
     val TTS_SERVICE="net.carrolltech.athena.tts_service."
     val MAIN_ACTIVITY="net.carrolltech.athena.tts_service.MainActivity"
+    val TTS_ACTUAL_SERVICE="net.carrolltech.athena.tts_service.tts.AthenaTTSLanding"
+    val TTS_ANDROID_SERVICE="net.carrolltech.athena.tts_service.tts.AthenaTextToSpeechService"
+
 
     val MESSAGE="assistant.framework.protocol.MESSAGE"
     val STDERR="assistant.framework.protocol.STDERR"

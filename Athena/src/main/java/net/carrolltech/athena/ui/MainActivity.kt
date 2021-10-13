@@ -39,7 +39,9 @@ class MainActivity: Activity()
         textView.setHorizontallyScrolling(true)
 
         var assistIntent = Intent()
+        // This isn't a thing anymore. And why was I even starting this here?
         assistIntent.setClassName(this,"com.example.sapphireassistantframework.voiceassistant.CoreVoiceInteractionService")
+        // Is ths required to initialize the Android assistant?
         assistIntent.setAction(Intent.ACTION_ASSIST)
        // startService(assistIntent)
     }
@@ -56,6 +58,7 @@ class MainActivity: Activity()
         }
     }
 
+    // What exactly is this supposed to be testing?
     fun testComponent(view: View){
         var testIntent = Intent().setAction("action.athena.TEST")
         testIntent.setClassName(this,SapphireUtils().MAIN_ACTIVITY)

@@ -18,6 +18,7 @@ import java.util.*
 
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
+	// Is there a better place to put these state variables?
 	var ttsInit = false
 	var textToSpeech: TextToSpeech? = null
 
@@ -54,14 +55,15 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	fun sortMail(intent: Intent) {
 		Log.i("Sorting intent")
 7
-		// Handle actions here
+		// Handle actions here. This might be the eventual entrance for a scripting language
 		when (initialized) {
 			true -> pathProcessing(intent)
 			false -> when (intent.action) {
-				ACTION_SAPPHIRE_INITIALIZE -> startRegistrationService()
-				ACTION_SAPPHIRE_CORE_REGISTRATION_COMPLETE -> initialize(intent)
-				ACTION_SAPPHIRE_MODULE_REGISTER -> forwardRegistration(intent)
-				ACTION_SAPPHIRE_SPEAK -> speakToUser(intent)
+				SapphireUtils().ACTION_SAPPHIRE_INITIALIZE -> startRegistrationService()
+				// Why does registration start inti, and not ACTION_SAPPHIRE_INITIALIZE. That's counterintuitive
+				SapphireUtils().ACTION_SAPPHIRE_CORE_REGISTRATION_COMPLETE -> initialize(intent)
+				SapphireUtils().ACTION_SAPPHIRE_MODULE_REGISTER -> forwardRegistration(intent)
+				SapphireUtils().ACTION_SAPPHIRE_SPEAK -> speakToUser(intent)
 			}
 		}
 	}
@@ -88,15 +90,18 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	// Can this be wrapped in to nextModule or handleNewInput
 	fun forwardRegistration(intent: Intent){
 		// I don't think the incoming intent can propagate
+		// I think this is where the infinite loop is happening
 		var outgoingIntent = Intent(intent)
-		when(outgoingIntent.getStringExtra(FROM)){
-			"${this.packageName};${this.packageName}.CoreRegistrationService" -> {
-				outgoingIntent.setAction(ACTION_SAPPHIRE_MODULE_REGISTER)
-				outgoingIntent.setClassName(intent.getStringExtra(MODULE_PACKAGE)!!,intent.getStringExtra(MODULE_CLASS)!!)
+		// This relies on "FROM". Should it need to?
+		when(outgoingIntent.getStringExtra(SapphireUtils().FROM)){
+			"${this.packageName};${SapphireUtils().REGISTRATION_SERVICE}" -> {
+				outgoingIntent.setAction(SapphireUtils().ACTION_SAPPHIRE_MODULE_REGISTER)
+				outgoingIntent.setClassName(intent.getStringExtra(SapphireUtils().MODULE_PACKAGE)!!,intent.getStringExtra(SapphireUtils().MODULE_CLASS)!!)
 				startRegistrationService(connection,outgoingIntent)
 			}
 			else -> {
-				outgoingIntent.setClassName(PACKAGE_NAME,"${this.packageName}.CoreRegistrationService")
+
+				outgoingIntent.setClassName(PACKAGE_NAME,SapphireUtils().REGISTRATION_SERVICE)
 				startService(outgoingIntent)
 			}
 		}
@@ -116,7 +121,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	fun pathProcessing(intent: Intent){
-		intent.setClassName(this,"net.carrolltech.athena.natural_language_processor.ProcessorService")
+		intent.setClassName(this,SapphireUtils().PROCESSOR_SERVICE)
 		Log.d("Intent died in pathProcessing")
 		//var path = checkID(intent.getStringExtra("ID")!!)
 		//unbindPriorService("service")
@@ -133,17 +138,8 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	// This isn't designed to initialize from being set as the assistant. I need to change that
-	fun initialize(intent: Intent){
+	fun initialize(intent: Intent?){
 		Log.v("Initializing")
-		// Might want to try/catch this
-		for(key in intent.getStringArrayListExtra(DATA_KEYS)!!){
-			Log.d("Offloading PendingIntent for ${key}")
-			// Whelp, just load it up...
-			//pendingIntentLedger.put(key,intent.getParcelableExtra(key)!!)
-		}
-		//This needs to be update for Android Assistant compatiblity
-		//startKaldiService()
-		// Create a textToSpeech reference. Is this bad for the battery?
 		textToSpeech = TextToSpeech(this,this)
 		initialized = true
 	}
@@ -152,15 +148,14 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	fun startKaldiService(){
 		// Check if service is running first
 		// This is no longer a thing, since it's been renamed for the Android Assistant
-		var intent = Intent().setClassName(this,"${packageName}.stt.KaliService")
+		var intent = Intent().setClassName(this,"${packageName}.stt.KaldiService")
 		startService(intent)
 	}
 
 	// Run through the registration process
 	fun startRegistrationService(){
-		Log.i("Starting registration service")
 		var registrationIntent = Intent().setClassName(this,SapphireUtils().REGISTRATION_SERVICE)
-		registrationIntent.setAction(ACTION_SAPPHIRE_INITIALIZE)
+		registrationIntent.setAction(SapphireUtils().ACTION_SAPPHIRE_INITIALIZE)
 		Log.v("starting registration service")
 		startService(registrationIntent)
 	}

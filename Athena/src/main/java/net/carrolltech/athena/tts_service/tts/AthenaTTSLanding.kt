@@ -5,6 +5,11 @@ import net.carrolltech.athena.framework.SapphireFrameworkService
 import net.carrolltech.athena.tts_service.dispatcher.OnTtsStateListener
 import net.carrolltech.athena.tts_service.dispatcher.TtsStateDispatcher
 
+/**
+ * This section is where I am actually doing the audio processing. The AthenaTextToSpeechService is the
+ * service that is required by Android to use TTS, so
+ */
+
 class AthenaTTSLanding: SapphireFrameworkService() {
     var speed = 1.0F
     var ready = false
@@ -30,6 +35,7 @@ class AthenaTTSLanding: SapphireFrameworkService() {
 
     }
 
+    // This is where the literal audio processing happens. This is core code
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent!!.action == "on.the.backend") {
             if(ready == true) {

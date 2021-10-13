@@ -7,15 +7,17 @@ import net.carrolltech.athena.framework.SapphireUtils
 
 class CoreRegistrationService: SapphireFrameworkService(){
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        readAssetInfo()
+        when(intent?.action){
+            SapphireUtils().ACTION_SAPPHIRE_INITIALIZE -> readAssetInfo()
+            else -> Log.e( "There was an issue with the registration intents")
+        }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
     fun readAssetInfo(){
-        val ATHENA_INITIALIZE = "action.athena.skill.INITIALIZE"
-
-        var templateIntent = Intent().setAction(ATHENA_INITIALIZE)
+        // I had this set to initialize. Why would I do that
+        var templateIntent = Intent().setAction(SapphireUtils().ACTION_SAPPHIRE_CORE_REGISTRATION_COMPLETE)
         var availableSapphireModules = this.packageManager.queryIntentServices(templateIntent,
             PackageManager.GET_RESOLVED_FILTER
         )
