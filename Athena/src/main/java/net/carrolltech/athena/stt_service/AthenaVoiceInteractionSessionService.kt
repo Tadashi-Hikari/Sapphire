@@ -35,6 +35,7 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         var ttsIntent = Intent().setAction(SapphireUtils().ACTION_SAPPHIRE_SPEAK)
         // I may have to personally retrain the tensorflow model, but I just can't do it on my laptop right now
+        // This says "What can  I do for you" after every time you say "Sapphire". It may be a bit extra
         ttsIntent.putExtra("SPEAKING_PAYLOAD", "what can I do for you?")
         ttsIntent.setClassName(this,SapphireUtils().CORE_SERVICE)
         startService(ttsIntent)

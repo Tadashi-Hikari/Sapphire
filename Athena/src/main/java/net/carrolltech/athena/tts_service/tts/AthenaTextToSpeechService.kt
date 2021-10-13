@@ -18,6 +18,16 @@ class AthenaTextToSpeechService: TextToSpeechService(){
 
     var speed = 1.0F
 
+
+    private val DEFAULT_LANGUAGE = "eng"
+    private val DEFAULT_COUNTRY = "USA"
+    private val DEFAULT_VARIANT = "male,rms"
+
+
+    private val mCountry = DEFAULT_COUNTRY
+    private val mLanguage = DEFAULT_LANGUAGE
+    private val mVariant = DEFAULT_VARIANT
+
     // I think this is created as soon as it is set as the default TTS service
     override fun onCreate() {
         super.onCreate()
@@ -43,13 +53,13 @@ class AthenaTextToSpeechService: TextToSpeechService(){
 
     // This also need to be fully implemented
     override fun onGetLanguage(): Array<String> {
-        Log.d("TTS", "This isn't needed past API 18, where as I target #25")
-        return arrayOf("English")
+        // This information isn't accurate. It's copied from Flite TTS just to prevent errors in Android
+        return arrayOf(mLanguage,mCountry,mVariant)
     }
 
     // This also needs to be fully implemented
     override fun onLoadLanguage(lang: String?, country: String?, variant: String?): Int {
-        Log.d("TTS","For now, only english works")
+        // I believe 1 is true. It should be querying for the language, so I will need to fix this
         return 1
     }
 
@@ -60,6 +70,13 @@ class AthenaTextToSpeechService: TextToSpeechService(){
     }
 
     override fun onSynthesizeText(request: SynthesisRequest?, callback: SynthesisCallback?) {
+        // This is just temporary, to prevent errors that may be generated in the system
+        var requestedLanguage = request?.language
+        var requestedCountry = request?.country
+        var requestedVariant = request?.variant
+        // I need to convert this int to a float that's compatible =
+        var speechRate = request?.speechRate
+
         var intent = Intent().setAction("on.the.backend")
         intent.setClassName(this,SapphireUtils().TTS_ACTUAL_SERVICE)
         intent.putExtra("payload",request!!.charSequenceText.toString())

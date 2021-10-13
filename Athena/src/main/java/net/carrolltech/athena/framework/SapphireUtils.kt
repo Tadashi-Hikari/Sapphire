@@ -8,6 +8,8 @@ class SapphireUtils{
     val MAIN_ACTIVITY="net.carrolltech.athena.tts_service.MainActivity"
     val TTS_ACTUAL_SERVICE="net.carrolltech.athena.tts_service.tts.AthenaTTSLanding"
     val TTS_ANDROID_SERVICE="net.carrolltech.athena.tts_service.tts.AthenaTextToSpeechService"
+    val STT_ANDROID_SERVICE="net.carrolltech.athena.stt_service.AthenaVoiceInteractionSessionService"
+    val SAPPHIRE_ALARM_SKILL="net.carrolltech.athenaalarmskill.AlarmService"
 
 
     val MESSAGE="assistant.framework.protocol.MESSAGE"

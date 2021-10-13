@@ -8,7 +8,7 @@ import android.provider.AlarmClock
 import android.util.Log
 import kotlin.random.Random
 
-class simpleAlarmService: Service(){
+class AlarmService: Service(){
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action){
@@ -31,8 +31,9 @@ class simpleAlarmService: Service(){
 
     // I will need to error check this somewhere
     fun setAlarm(intent: Intent?){
+        Log.d("AlarmService","Setting alarm (Demo)")
         var alarmIntent = Intent().setAction(AlarmClock.ACTION_SET_ALARM)
-        var hour = 0; var minutes = 0
+        var hour = 5; var minutes = 0
 
         alarmIntent.putExtra(AlarmClock.EXTRA_HOUR, hour)
         alarmIntent.putExtra(AlarmClock.EXTRA_MINUTES, minutes)

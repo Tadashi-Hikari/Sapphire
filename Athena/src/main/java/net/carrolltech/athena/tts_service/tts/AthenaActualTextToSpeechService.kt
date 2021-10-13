@@ -10,7 +10,7 @@ import net.carrolltech.athena.tts_service.dispatcher.TtsStateDispatcher
  * service that is required by Android to use TTS, so
  */
 
-class AthenaTTSLanding: SapphireFrameworkService() {
+class AthenaActualTextToSpeechService: SapphireFrameworkService() {
     var speed = 1.0F
     var ready = false
     var queue = ""

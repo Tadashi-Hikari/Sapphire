@@ -11,9 +11,9 @@ import org.json.JSONObject
 import java.util.*
 
 /***
- * Honestly, I think I wrote some trash code here, but I'm just hacking it together to get it
- * figured out for now. I want to move away from treating things like a registry, but I need
- * to read a little bit more on design before I figure out what is the best way to go
+ * CoreService handles redirecting intents through Athena, to ensure that Android doesn't block the
+ * intent as being from a background service. It also offers a hook for the Sapphire Framework (not
+ * yet implemented) so that the system can be made more modular
  */
 
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
@@ -123,6 +123,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	fun pathProcessing(intent: Intent){
 		intent.setClassName(this,SapphireUtils().PROCESSOR_SERVICE)
 		Log.d("Intent died in pathProcessing")
+		var alarmIntent = Intent().setClassName(this,SapphireUtils().SAPPHIRE_ALARM_SKILL)
 		//var path = checkID(intent.getStringExtra("ID")!!)
 		//unbindPriorService("service")
 		// send to chosen intent

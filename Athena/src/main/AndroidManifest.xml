@@ -97,7 +97,7 @@
                 android:resource="@xml/tts_engine">
             </meta-data>
         </service>
-        <service android:name=".tts_service.tts.AthenaTTSLanding"
+        <service android:name=".tts_service.tts.AthenaActualTextToSpeechService"
             android:exported="true">
         </service>
         <service android:name=".core.CoreRegistrationService"
