@@ -1,17 +1,10 @@
 package net.carrolltech.athena.core
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
-import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import net.carrolltech.athena.R
-import net.carrolltech.athena.ui.MainActivity
 import org.json.JSONObject
 import java.util.*
 
@@ -44,7 +37,6 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	override fun onCreate() {
 		super.onCreate()
-		textToSpeech = TextToSpeech(this,this)
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,7 +54,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 7
 		// Handle actions here
 		when (initialized) {
-			true -> defaultPath(intent)
+			true -> pathProcessing(intent)
 			false -> when (intent.action) {
 				ACTION_SAPPHIRE_INITIALIZE -> startRegistrationService()
 				ACTION_SAPPHIRE_CORE_REGISTRATION_COMPLETE -> initialize(intent)
@@ -70,6 +62,11 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				ACTION_SAPPHIRE_SPEAK -> speakToUser(intent)
 			}
 		}
+	}
+
+	// This is just here to remind me that I need to break the binding to services if they run too long
+	fun breakBinding(){
+
 	}
 
 	// This needs a better naming scheme
@@ -103,8 +100,22 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 	}
 
-	fun defaultPath(intent: Intent){
-		// Send to processor. How should I track where it is in the path?
+	// This is used for tracking a flow through the assistant
+	fun generateFlowID(){
+
+	}
+
+	fun checkID(id: String): String{
+		return "the remaining path for this intent"
+	}
+
+	fun unbindPriorService(service: String){
+		// This will be used to send the unbind signal
+	}
+
+	fun pathProcessing(intent: Intent){
+		var path = checkID(intent.getStringExtra("ID")!!)
+		unbindPriorService("service")
 		// send to chosen intent
 		if(intent.hasExtra("ENTITIES")){
 			Log.d(intent.getStringArrayListExtra("ENTITIES").toString())
@@ -125,10 +136,14 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 			// Whelp, just load it up...
 			//pendingIntentLedger.put(key,intent.getParcelableExtra(key)!!)
 		}
+		// Start the speec to text recognition
 		startKaldiService()
+		// Create a textToSpeech reference. Is this bad for the battery?
+		textToSpeech = TextToSpeech(this,this)
 		initialized = true
 	}
 
+	// Athen can expect this to exist. The Sapphire Framework cannot
 	fun startKaldiService(){
 		var intent = Intent().setClassName(this,"${packageName}.stt.KaliService")
 		startService(intent)
@@ -155,10 +170,16 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				// This will be moved to a permission style check, to increase user control and prevent rouge background services
 				Toast.makeText(applicationContext, "This service: ${name?.shortClassName} didn't return a null binder, is that ok?", Toast.LENGTH_LONG)
 			}
+			// Update the log
+		}
+
+		override fun onBindingDied(name: ComponentName?) {
+			//Update the log
 		}
 
 		override fun onServiceDisconnected(name: ComponentName?) {
 			Log.i("Service disconnected")
+			// Update the log
 		}
 	}
 }

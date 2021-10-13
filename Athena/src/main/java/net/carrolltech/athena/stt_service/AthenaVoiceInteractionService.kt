@@ -8,6 +8,10 @@ import org.kaldi.*
 import java.io.File
 import java.lang.Exception
 
+/***
+ * This is all of the code for the actual PocketSphinx recognizer
+ */
+
 class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionService(){
     private lateinit var recognizer: CustomSpeechRecognizer
 
@@ -29,11 +33,13 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
 
     fun setup(){
         var assets = Assets(this)
+        // I could probably modify this to not be so archaic and not use such a rigid filestructure
         var assetDir: File = assets.syncAssets()
 
         Vosk.SetLogLevel(0)
 
         var model = Model(assetDir.toString()+"/model-android")
+        // This can be used to improve the processing, I think, since it's not a huge acustic model
         //recognizer = CustomSpeechRecognizer(model,"[\"athena\",\"hey athena\"]")
         recognizer = CustomSpeechRecognizer(model)
         recognizer.addListener(this)

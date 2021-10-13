@@ -7,7 +7,7 @@ import android.os.IBinder
 /***
  * The TalkBack skill is just a fun way of showing how the Speech to Text and the Text to Speech
  * functions work, aside from the standard Android way (which is surprisingly confusing).
- * Using TTS is as simple as senting a string and an intent to the CoreService, while you can
+ * Using TTS is as simple as sending a string and an intent to the CoreService, while you can
  * use STT in the traditional way (through an onscreen activity) or through the custom implemented
  * service built into Athena.
  */

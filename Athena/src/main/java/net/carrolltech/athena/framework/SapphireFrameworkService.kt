@@ -46,15 +46,17 @@ abstract class SapphireFrameworkService: Service() {
 		}
 	}
 
-
+	// These two are convenience classes
 	val MESSAGE="assistant.framework.protocol.MESSAGE"
 	val STDERR="assistant.framework.protocol.STDERR"
 	// This is going to be for ENV_VARIABLES
 	val POSTAGE="assistant.framework.protocol.POSTAGE"
+	// Route is used by a module to update the path on the go. Will need security
 	val ROUTE="assistant.framework.protocol.ROUTE"
+	// This is only needed from the originating module
 	val FROM= "assistant.framework.protocol.FROM"
 	val ID = "assistant.framework.module.protocol.ID"
-	// Is this temp or nah
+	// This shouldn't be needed, since ID can track it
 	val RECEIPIANT = "assistant.framework.module.protocol.RECEIPIANT"
 
 	// Maybe this should be used elsewhere...
@@ -83,6 +85,7 @@ abstract class SapphireFrameworkService: Service() {
 	val DATA_KEYS="assistant.framework.module.protocol.DATA_KEYS"
 
 	// Actions
+	// I don't think I need this with the new design
 	val ACTION_SAPPHIRE_CORE_BIND="assistant.framework.core.action.BIND"
 	// This is sent to the CORE from the module, so the core can handle the registration process
 	// This is for a module to request *all* data from the core (implicit intent style)

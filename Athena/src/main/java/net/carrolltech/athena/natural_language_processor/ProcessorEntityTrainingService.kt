@@ -1,25 +1,13 @@
-package net.carrolltech.athena.processor
+package net.carrolltech.athena.natural_language_processor
 
-import android.animation.TimeAnimator
 import android.content.Intent
-import android.util.Log
-import androidx.recyclerview.widget.RecyclerViewAccessibilityDelegate
-import edu.stanford.nlp.ie.NERFeatureFactory
 import edu.stanford.nlp.ie.crf.CRFClassifier
 import edu.stanford.nlp.ling.CoreLabel
-import edu.stanford.nlp.pipeline.AnnotationPipeline
-import edu.stanford.nlp.pipeline.POSTaggerAnnotator
-import edu.stanford.nlp.pipeline.TokenizerAnnotator
-import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator
 import edu.stanford.nlp.sequences.ColumnDocumentReaderAndWriter
-import edu.stanford.nlp.time.TimeAnnotator
-import edu.stanford.nlp.util.CoreMap
-import kotlinx.coroutines.newFixedThreadPoolContext
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.File
 import java.io.InputStream
 import java.lang.Exception
-import java.lang.StringBuilder
 import java.util.*
 
 class ProcessorEntityTrainingService: SapphireFrameworkService() {

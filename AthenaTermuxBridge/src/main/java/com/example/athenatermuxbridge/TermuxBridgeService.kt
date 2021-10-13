@@ -25,6 +25,19 @@ class TermuxBridgeService: Service(){
         return null
     }
 
+    fun termuxStuff(){
+        // This is requried for a termux intent
+        var one = "RUN_COMMAND_SERVICE.EXTRA_COMMAND_PATH"
+        // For start flags, not stdin
+        var two = "RUN_COMMAND_SERVICE.EXTRA_ARGUMENTS"
+    }
+
+    // This is just a simple script that can be referenced to create an easier callback
+    // There is also a PendingIntent callback that can be utilized directly from Termux
+    fun generateSimpleScriptForTermux(){
+        var script = "am 'this.service.class"
+    }
+
     fun sendPendingIntent(){
         Log.v(this.javaClass.name,"Termux bridge initializing")
         // Nothing special here, just a PendingIntent for this service

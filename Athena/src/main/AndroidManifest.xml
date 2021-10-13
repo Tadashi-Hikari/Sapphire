@@ -38,15 +38,15 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".processor.ProcessorService"
+            android:name=".natural_language_processor.ProcessorService"
             android:process=":ProcessorCentralService">
         </service>
         <service
-            android:name=".processor.ProcessorTrainingService"
+            android:name=".natural_language_processor.ProcessorTrainingService"
             android:process=":ProcessorTrainingService">
         </service>
         <service
-            android:name=".processor.ProcessorEntityTrainingService"
+            android:name=".natural_language_processor.ProcessorEntityTrainingService"
             android:process=":ProcessorEntityTrainingService">
         </service>
         <service

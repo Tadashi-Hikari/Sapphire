@@ -1,8 +1,7 @@
-package net.carrolltech.athena.processor
+package net.carrolltech.athena.natural_language_processor
 
 import android.content.Intent
 import android.os.IBinder
-import android.view.View
 import edu.stanford.nlp.classify.ColumnDataClassifier
 import edu.stanford.nlp.ie.crf.CRFClassifier
 import edu.stanford.nlp.ling.CoreLabel
@@ -34,11 +33,14 @@ class ProcessorService: SapphireFrameworkService(){
     }
 
     // This should be renamed, definitely
+    // This is handling running both things concurrently. It could probably be more elegant
+    // it looks hacked together
     fun process(intent: Intent?){
         var utterance = intent!!.getStringExtra(MESSAGE)
         var outgoingIntent = Intent()
 
         try{
+            // This should be moved off to a command file?
             if(utterance == "delete"){
                 deleteClassifier()
             }else if(utterance != ""){
@@ -62,6 +64,7 @@ class ProcessorService: SapphireFrameworkService(){
                     // This is an arbitrary number, and should probably be a configurable variable
                     if (classifiedScores.getCount(classifiedDatum) >= .6) {
                         Log.i("Text matches class ${classifiedDatum}")
+                        TimeDateConverter().testing("something")
                         outgoingIntent.putExtra(ROUTE, classifiedDatum)
                     } else {
                         Log.i("Text does not match a class. Using default")

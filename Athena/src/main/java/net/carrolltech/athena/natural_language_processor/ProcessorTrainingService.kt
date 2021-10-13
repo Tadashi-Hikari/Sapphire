@@ -1,11 +1,7 @@
-package net.carrolltech.athena.processor
+package net.carrolltech.athena.natural_language_processor
 
 import android.content.Intent
 import edu.stanford.nlp.classify.ColumnDataClassifier
-import edu.stanford.nlp.ie.NERFeatureFactory
-import edu.stanford.nlp.ie.crf.CRFClassifier
-import edu.stanford.nlp.ling.CoreLabel
-import edu.stanford.nlp.util.CoreMap
 import net.carrolltech.athena.framework.SapphireFrameworkService
 import java.io.*
 import java.lang.Exception

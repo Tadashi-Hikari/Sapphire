@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.carrolltech.athenaalarmskill">
+    package="net.carrolltech.athenaalarmskill"
+    android:versionCode="1"
+    android:versionName="0.0.1">
 
     <application
         android:allowBackup="true"

@@ -1,4 +1,4 @@
-package net.carrolltech.athena.processor
+package net.carrolltech.athena.natural_language_processor
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
@@ -75,7 +75,7 @@ class BracketExpander: Service(){
                 }
 
                 // The bracket is the first one encountered AFTER the one that initiated the top expandBracket()
-                // changing this to 1 (adding 2 totall caught large, and addon. They're out of order though
+                // changing this to 1 (adding 2 totally caught large, and addon. They're out of order though
                 var bracketCount = 1; var indexAdvance = 1
                 // adding one to index gets good woahs, but misses living....?
                 for(character in bracketedSentence.substring(index+1)) {
