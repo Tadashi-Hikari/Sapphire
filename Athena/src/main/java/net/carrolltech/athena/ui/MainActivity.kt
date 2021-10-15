@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import android.service.voice.VoiceInteractionSession
 import android.util.Log
 import android.view.View
@@ -44,6 +45,11 @@ class MainActivity: Activity()
         // Is ths required to initialize the Android assistant?
         assistIntent.setAction(Intent.ACTION_ASSIST)
        // startService(assistIntent)
+    }
+
+    fun launchaSettings(view: View){
+        var intent = Intent().setClassName(this,"net.carrolltech.athena.ui.SettingsActivity")
+        startActivity(intent)
     }
 
     fun startAssistant(view: View){

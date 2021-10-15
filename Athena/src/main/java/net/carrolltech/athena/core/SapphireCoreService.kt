@@ -29,26 +29,6 @@ abstract class SapphireCoreService: SapphireFrameworkService(){
 		intent.putExtra(SapphireUtils().POSTAGE,postage)
 	}
 
-	fun cleanRoute(intent: Intent):Intent{
-		if(intent.hasExtra(SapphireUtils().ROUTE)){
-			Log.v("Current ROUTE: ${intent.getStringExtra(SapphireUtils().ROUTE)}")
-			var modules = intent.getStringExtra(SapphireUtils().ROUTE)!!.split(",")
-			var newRoute = ""
-			for(module in modules){
-				Log.v("Checking module ${module}")
-					if((module != null)and(module != "")){
-						when(newRoute == ""){
-							true -> newRoute += module
-							false -> newRoute += (",${module}")
-					}
-				}
-			}
-			Log.v("New ROUTE: ${newRoute}")
-			intent.putExtra(SapphireUtils().ROUTE,newRoute)
-		}
-		return intent
-	}
-
 	fun validatePostage(postage: String):String{
 		var jsonDefaultModules = JSONObject()
 		var jsonPostageTable = JSONObject()

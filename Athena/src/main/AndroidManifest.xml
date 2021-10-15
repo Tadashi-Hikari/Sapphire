@@ -12,7 +12,7 @@
             <action android:name="action.athena.skill.INITIALIZE" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.TTS_SERVICE"/>
+            <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
 
@@ -20,11 +20,15 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Athena"
-        android:largeHeap="true">
-        <activity android:name=".ui.SettingsActivity"/>
+        android:theme="@style/Theme.Athena">
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/Theme.Athena.NoActionBar" />
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/title_activity_main"
@@ -37,30 +41,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".natural_language_processor.ProcessorService"
-            android:process=":ProcessorCentralService">
-        </service>
+            android:process=":ProcessorCentralService" />
         <service
             android:name=".natural_language_processor.ProcessorTrainingService"
-            android:process=":ProcessorTrainingService">
-        </service>
+            android:process=":ProcessorTrainingService" />
         <service
             android:name=".natural_language_processor.ProcessorEntityTrainingService"
-            android:process=":ProcessorEntityTrainingService">
-        </service>
+            android:process=":ProcessorEntityTrainingService" />
         <service
             android:name=".core.CoreService"
-            android:exported="true">
-        </service>
+            android:exported="true" />
         <service
             android:name=".stt_service.AthenaVoiceInteractionService"
             android:exported="true"
             android:permission="android.permission.BIND_VOICE_INTERACTION">
             <meta-data
                 android:name="android.voice_interaction"
-                android:resource="@xml/interaction_service">
-            </meta-data>
+                android:resource="@xml/interaction_service" />
 
             <intent-filter>
                 <action android:name="android.service.voice.VoiceInteractionService" />
@@ -69,39 +69,43 @@
         <service
             android:name=".stt_service.AthenaVoiceInteractionSessionService"
             android:permission="android.permission.BIND_VOICE_INTERACTION"
-            android:process=":SessionService">
-        </service>
+            android:process=":SessionService" />
         <service android:name=".stt_service.AthenaRecognitionService">
             <meta-data
                 android:name="android.speech"
-                android:resource="@xml/recognition_service">
-            </meta-data>
+                android:resource="@xml/recognition_service" />
+
             <intent-filter>
-                <action android:name="android.speech.RecognitionService"/>
+                <action android:name="android.speech.RecognitionService" />
             </intent-filter>
         </service>
-        <activity android:name=".tts_service.MainActivity">
-        </activity>
-        <!--This bullshit. Android restricts the TTS to a single thread, which kills the TensorflowTTS
+
+        <activity android:name=".tts_service.MainActivity" />
+        <!--
+This bullshit. Android restricts the TTS to a single thread, which kills the TensorflowTTS
         By moving it to its own process, I isolate it from the rest of the app, then send an intent to
-        the actual TTS service-->
-        <service android:name=".tts_service.tts.AthenaTextToSpeechService"
+        the actual TTS service
+        -->
+        <service
+            android:name=".tts_service.tts.AthenaTextToSpeechService"
             android:exported="true"
             android:process=":ttsProxy">
             <intent-filter>
                 <action android:name="android.intent.action.TTS_SERVICE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <meta-data
                 android:name="android.speech.tts"
-                android:resource="@xml/tts_engine">
-            </meta-data>
+                android:resource="@xml/tts_engine" />
         </service>
-        <service android:name=".tts_service.tts.AthenaActualTextToSpeechService"
-            android:exported="true">
-        </service>
-        <service android:name=".core.CoreRegistrationService"
-            android:exported="true">
-        </service>
+        <service
+            android:name=".tts_service.tts.AthenaActualTextToSpeechService"
+            android:exported="true" />
+        <service
+            android:name=".core.CoreRegistrationService"
+            android:exported="true" />
     </application>
+
 </manifest>

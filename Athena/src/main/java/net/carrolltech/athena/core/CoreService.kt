@@ -40,12 +40,17 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	override fun onCreate() {
 		super.onCreate()
+		// I think I accidentally deleted this component
+		textToSpeech = TextToSpeech(this,this)
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		Log.v("CoreService received an intent")
-		var passedIntent = cleanRoute(intent!!)
-		sortMail(passedIntent)
+		if(intent == null) {
+			Log.w("For some reason, core service didn't actually receive an intent. It just said it did")
+		}else {
+			sortMail(intent)
+		}
 
 		// This may need to be moved, if I am to do things in the background
 		return super.onStartCommand(intent, flags, startId)

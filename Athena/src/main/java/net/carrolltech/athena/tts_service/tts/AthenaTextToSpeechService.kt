@@ -15,7 +15,6 @@ import net.carrolltech.athena.tts_service.dispatcher.TtsStateDispatcher
  */
 
 class AthenaTextToSpeechService: TextToSpeechService(){
-
     var speed = 1.0F
 
 
