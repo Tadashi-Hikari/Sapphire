@@ -80,7 +80,6 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".tts_service.MainActivity" />
         <!--
 This bullshit. Android restricts the TTS to a single thread, which kills the TensorflowTTS
         By moving it to its own process, I isolate it from the rest of the app, then send an intent to

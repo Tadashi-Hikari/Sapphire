@@ -16,6 +16,12 @@ import java.util.*
  * yet implemented) so that the system can be made more modular
  */
 
+/**
+ * This might not start w/o the activity showing, since it's a normal service. I can either add
+ * an invisible overlay, or embrace the UI that pops up for Google assistant, and work it in to this
+ * I can also add a start/stop foreground service when processing, though I imagine that'd get annoying
+ */
+
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	// Is there a better place to put these state variables?
@@ -69,6 +75,8 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		when (initialized) {
 			true -> pathProcessing(intent)
 			false -> when (intent.action) {
+				// This should be an "on boot" or "when set to assistant" thing... Will it even start w/o the UI?
+				// It needs to install modules and train the processor
 				SapphireUtils().ACTION_SAPPHIRE_INITIALIZE -> startRegistrationService()
 				// Why does registration start inti, and not ACTION_SAPPHIRE_INITIALIZE. That's counterintuitive
 				SapphireUtils().ACTION_SAPPHIRE_CORE_REGISTRATION_COMPLETE -> initialize(intent)

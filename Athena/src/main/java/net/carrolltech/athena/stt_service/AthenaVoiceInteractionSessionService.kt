@@ -1,8 +1,12 @@
 package net.carrolltech.athena.stt_service
 
+import android.content.BroadcastReceiver
 import android.content.Intent
 import android.os.Bundle
+import android.os.TestLooperManager
 import android.service.voice.VoiceInteractionSessionService
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import net.carrolltech.athena.framework.SapphireUtils
 import org.json.JSONObject
@@ -12,7 +16,7 @@ import java.io.File
 /**
  * This is a service that holds the information for a current session ("Hey Athena... do XYZ").
  * I can do whatever I want in this area, and also use the InteractionSession to handle the
- * app and user data
+ * app and user data. The other session is just for the hotword.
  *
  * Iirc this is required by Android to register the app as an assistant
  */
@@ -25,20 +29,25 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
     // This will initialize the full recognizer in the background, waiting for the user to say "Athena"
     // This needs to be a second start point for CoreService
     override fun onCreate() {
-        Log.v(this.javaClass.simpleName,"Starting up the SessionService. This is a heavyweight operation")
+        Log.v(
+            this.javaClass.simpleName,
+            "Starting up the SessionService. This is a heavyweight operation"
+        )
         super.onCreate()
         System.loadLibrary("kaldi_jni");
+        // This is what is initing the STT
         setup()
     }
 
-    // I am pretty sure this is triggered by the system
+    // I have to take back the recognition speech for now, because it  interferes w/ listening
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         var ttsIntent = Intent().setAction(SapphireUtils().ACTION_SAPPHIRE_SPEAK)
-        // I may have to personally retrain the tensorflow model, but I just can't do it on my laptop right now
         // This says "What can  I do for you" after every time you say "Sapphire". It may be a bit extra
-        ttsIntent.putExtra("SPEAKING_PAYLOAD", "what can I do for you?")
+        ttsIntent.putExtra("SPEAKING_PAYLOAD", "What can I do for you")
         ttsIntent.setClassName(this,SapphireUtils().CORE_SERVICE)
         startService(ttsIntent)
+        // This is an issue, because it overlaps w/ Athena talking
+
         recognizer.startListening()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -50,6 +59,7 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
     }
 
     // This should run the very first time, right?
+    // Is there a way to speed this up?
     fun setup(){
         var assets = Assets(this)
         var assetDir: File = assets.syncAssets()
@@ -59,8 +69,6 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
         var model = Model(assetDir.toString()+"/model-android")
 
         recognizer = CustomSpeechRecognizer(model)
-        Log.v(this.javaClass.simpleName,"Alright, I'm ready to go")
-
         recognizer.addListener(this)
         recognizer.startListening()
     }
@@ -80,6 +88,7 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
             processIntent.putExtra(MESSAGE,hypothesisJson.getString("text"))
             startService(processIntent)
         }
+        // I am wondering if I should shut down the service here, or if Android will..
     }
 
     override fun onTimeout() {

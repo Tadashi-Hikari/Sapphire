@@ -10,12 +10,15 @@ import android.provider.Settings
 import android.service.voice.VoiceInteractionSession
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import net.carrolltech.athena.R
 import net.carrolltech.athena.framework.SapphireUtils
+import net.carrolltech.athena.stt_service.AthenaVoiceInteractionService
+import org.w3c.dom.Text
 import android.os.Bundle as Bundle
 
 
@@ -46,6 +49,15 @@ class MainActivity: Activity()
         // Is ths required to initialize the Android assistant?
         assistIntent.setAction(Intent.ACTION_ASSIST)
        // startService(assistIntent)
+    }
+
+    // This might not work. it may  have to go through core. But, it is started by an activity
+    fun renameAssistant(view: View){
+        var intent = Intent().setClassName(this,"net.carrolltech.athena.stt_service.AthenaVoiceInteractionService")
+        intent.setAction("RENAME_SAPPHIRE")
+        var name = findViewById<TextView>(R.id.assistant_name)
+        intent.putExtra("NAME",name.text.toString())
+        startService(intent)
     }
 
     fun launchSettings(view: View){
