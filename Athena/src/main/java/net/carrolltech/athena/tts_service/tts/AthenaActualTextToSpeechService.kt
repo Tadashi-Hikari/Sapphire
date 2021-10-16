@@ -11,6 +11,7 @@ import net.carrolltech.athena.tts_service.dispatcher.TtsStateDispatcher
  */
 
 class AthenaActualTextToSpeechService: SapphireFrameworkService() {
+    // This is a duplicate
     var speed = 1.0F
     var ready = false
     var queue = ""
@@ -23,7 +24,9 @@ class AthenaActualTextToSpeechService: SapphireFrameworkService() {
             override fun onTtsReady() {
                 Log.d("The TTS is ready")
                 ready = true
-                TtsManager.getInstance().speak(queue, speed, true)
+                if(queue != "") {
+                    TtsManager.getInstance().speak(queue, speed, true)
+                }
             }
             override fun onTtsStart(text: String) {
             }
@@ -40,6 +43,7 @@ class AthenaActualTextToSpeechService: SapphireFrameworkService() {
         if (intent!!.action == "on.the.backend") {
             if(ready == true) {
                 var inputText = intent.getStringExtra("payload")
+                // Something about calling interrupt right here causes it to crash. I don't think Tts had been instantiated
                 TtsManager.getInstance().speak(inputText, speed, true)
             }else{
                 queue = intent.getStringExtra("payload")!!

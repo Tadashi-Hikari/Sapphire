@@ -19,12 +19,19 @@ import java.util.*
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	// Is there a better place to put these state variables?
-	var ttsInit = false
+	var utterance: String? = null
 	var textToSpeech: TextToSpeech? = null
 
-	// I don't like this either
+	// This should be thread safe... Should I shut it down when not in use? or is that too resource intense
 	override fun onInit(status: Int) {
-		ttsInit = true
+		if(utterance != null) {
+			textToSpeech!!.speak(
+				utterance,
+				TextToSpeech.QUEUE_FLUSH,
+				null,
+				null
+			)
+		}
 	}
 
 	//State variables
@@ -40,8 +47,6 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	override fun onCreate() {
 		super.onCreate()
-		// I think I accidentally deleted this component
-		textToSpeech = TextToSpeech(this,this)
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -80,16 +85,9 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	// This needs a better naming scheme
 	fun speakToUser(intent: Intent){
-		if(ttsInit == true) {
-			textToSpeech!!.speak(
-				intent.getStringExtra("SPEAKING_PAYLOAD")!!,
-				TextToSpeech.QUEUE_FLUSH,
-				null,
-				null
-			)
-		}else{
-			Log.d("There was an error getting the system to speak")
-		}
+		// I think I accidentally deleted this component
+		utterance = intent.getStringExtra("SPEAKING_PAYLOAD")
+		textToSpeech = TextToSpeech(this,this)
 	}
 
 	// Can this be wrapped in to nextModule or handleNewInput

@@ -92,10 +92,8 @@ This bullshit. Android restricts the TTS to a single thread, which kills the Ten
             android:process=":ttsProxy">
             <intent-filter>
                 <action android:name="android.intent.action.TTS_SERVICE" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <meta-data
                 android:name="android.speech.tts"
                 android:resource="@xml/tts_engine" />

@@ -15,9 +15,6 @@ import net.carrolltech.athena.tts_service.dispatcher.TtsStateDispatcher
  */
 
 class AthenaTextToSpeechService: TextToSpeechService(){
-    var speed = 1.0F
-
-
     private val DEFAULT_LANGUAGE = "eng"
     private val DEFAULT_COUNTRY = "USA"
     private val DEFAULT_VARIANT = "male,rms"
@@ -32,21 +29,10 @@ class AthenaTextToSpeechService: TextToSpeechService(){
         super.onCreate()
 
         // Do a permission check
-
-        TtsManager.getInstance().init(this)
-
-        TtsStateDispatcher.getInstance().addListener(object : OnTtsStateListener {
-            override fun onTtsReady() {
-                Log.d("TTS","The TTS is ready")
-            }
-            override fun onTtsStart(text: String) {}
-            override fun onTtsStop() {}
-        })
     }
 
     // This needs to be fully implemented
     override fun onIsLanguageAvailable(lang: String?, country: String?, variant: String?): Int {
-        TtsManager.getInstance().stopTts()
         return 1
     }
 

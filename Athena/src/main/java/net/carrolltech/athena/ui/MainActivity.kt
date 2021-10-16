@@ -33,7 +33,8 @@ class MainActivity: Activity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //checkForPermissions()
+        // Make sure that I don't need to do anything else here. I don't think I have a graceful shutdown if permissions are denied
+        checkForPermissions()
         setContentView(R.layout.core_activity)
         var textView = findViewById<TextView>(R.id.textView)
         // For some reason this won't work when set in the XML
@@ -47,7 +48,7 @@ class MainActivity: Activity()
        // startService(assistIntent)
     }
 
-    fun launchaSettings(view: View){
+    fun launchSettings(view: View){
         var intent = Intent().setClassName(this,"net.carrolltech.athena.ui.SettingsActivity")
         startActivity(intent)
     }
@@ -107,6 +108,8 @@ class MainActivity: Activity()
             Log.v("CoreCentralActivity","Permission granted")
         }else{
             Log.e("CoreCentralActivity","Permission must be granted for use")
+            var intent = Intent().setAction(Settings.ACTION_APPLICATION_SETTINGS)
+            startActivity(intent)
         }
     }
 }

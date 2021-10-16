@@ -54,6 +54,7 @@ class InputWorker {
         mInputQueue.offer(new InputText(inputText, speed));
     }
 
+    // This looks almost exactly like the one in TtsPlayer, except that mTtsPlayer is referenced at the bottom. They must both hold queues
     void interrupt() {
         mInputQueue.clear();
         if (mCurrentInputText != null) {
