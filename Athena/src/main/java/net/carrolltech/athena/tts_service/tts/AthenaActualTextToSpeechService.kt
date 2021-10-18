@@ -54,4 +54,9 @@ class AthenaActualTextToSpeechService: SapphireFrameworkService() {
 
         return super.onStartCommand(intent, flags, startId)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        TtsManager.getInstance().stopTts()
+    }
 }

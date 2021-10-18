@@ -1,6 +1,8 @@
 package net.carrolltech.athena.natural_language_processor
 
 import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Binder
 import android.os.IBinder
 import edu.stanford.nlp.classify.ColumnDataClassifier
 import edu.stanford.nlp.ie.crf.CRFClassifier
@@ -17,27 +19,31 @@ import java.io.File
  */
 
 class ProcessorService: SapphireFrameworkService(){
-    // I don't see any reason why this needs a PendingIntent over just a bound service
-    override fun onBind(intent: Intent?): IBinder? {
+    var id = "1"
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try{
             Log.v("ProcessorCentralService started")
-            when {
+            when(intent?.action){
+                SapphireUtils().ACTION_SAPPHIRE_PROCESSOR_TRAIN -> trainClassifier()
                 else -> process(intent)
             }
         }catch (exception: Exception){
             Log.d("There was an intent error w/ the processor")
-           exception.printStackTrace()
+            exception.printStackTrace()
         }
 
-        // Is this an issue, that the stuff here could be long running?
-        return null
+        return super.onStartCommand(intent, flags, startId)
     }
 
     // This should be renamed, definitely
     // This is handling running both things concurrently. It could probably be more elegant
     // it looks hacked together
     fun process(intent: Intent?){
-        var utterance = intent!!.getStringExtra(SapphireUtils().MESSAGE)
+        var utterance = ""
+        if(intent?.hasExtra(SapphireUtils().MESSAGE) == true) {
+            utterance = intent.getStringExtra(SapphireUtils().MESSAGE)!!
+        }
         var outgoingIntent = Intent()
 
         try{
@@ -47,21 +53,21 @@ class ProcessorService: SapphireFrameworkService(){
             }else if(utterance != ""){
                 Log.i("Loading the classifier")
                 var intentClassifier = loadIntentClassifier()
-                var entityClassifier = loadEntityClassifier()
+                //var entityClassifier = loadEntityClassifier()
                 if(intentClassifier != null) {
                     // I can probably move away from files, but I don't want to mess with that until it is working.
                     var utteranceFile = File(cacheDir,"utteranceFile")
                     utteranceFile.writeText(utterance!!)
-                    var catcher = entityClassifier.classifyAndWriteAnswers(utteranceFile.canonicalPath,entityClassifier.plainTextReaderAndWriter(),true)
-                    var entityList = cleanEntityList(catcher.toString())
-                    Log.v("Cleaned entity list: ${entityList.toString()}")
+                    //var catcher = entityClassifier.classifyAndWriteAnswers(utteranceFile.canonicalPath,entityClassifier.plainTextReaderAndWriter(),true)
+                    //var entityList = cleanEntityList(catcher.toString())
+                    //Log.v("Cleaned entity list: ${entityList.toString()}")
                     // This is specific to how CoreNLP works
                     var datumToClassify = intentClassifier.makeDatumFromLine("none\t${utterance}")
                     // Can these two be combined, or done at the same time?
                     var classifiedDatum = intentClassifier.classOf(datumToClassify)
                     var classifiedScores = intentClassifier.scoresOf(datumToClassify)
                     Log.v("Datum classification: ${classifiedDatum}")
-                    Log.v("Entities: ${catcher}")
+                    //Log.v("Entities: ${catcher}")
                     // This is an arbitrary number, and should probably be a configurable variable
                     if (classifiedScores.getCount(classifiedDatum) >= .6) {
                         Log.i("Text matches class ${classifiedDatum}")
@@ -71,16 +77,18 @@ class ProcessorService: SapphireFrameworkService(){
                         Log.i("Text does not match a class. Using default")
                         outgoingIntent.putExtra(SapphireUtils().ROUTE, "DEFAULT")
                     }
-                    outgoingIntent.putStringArrayListExtra("ENTITIES",entityList)
+                    //outgoingIntent.putStringArrayListExtra("ENTITIES",entityList)
                     outgoingIntent.putExtra(SapphireUtils().MESSAGE, utterance)
-                    outgoingIntent.setClassName(this,"net.carrolltech.athenaalarmskill.simpleAlarmService")
+                    outgoingIntent.setClassName(this,SapphireUtils().CORE_SERVICE)
                     startService(outgoingIntent)
                 }else{
-                    stopSelf()
+                    outgoingIntent.putExtra(SapphireUtils().ID,id)
+                    startService(outgoingIntent)
                 }
             }
         }catch(exception: Exception){
             Log.e("There was an error trying to process the text")
+            Log.e(exception.stackTraceToString())
         }
     }
 
@@ -89,7 +97,7 @@ class ProcessorService: SapphireFrameworkService(){
         if(classifierFile.exists() != true) {
             var trainingIntent = Intent()
             // This should work...
-            trainingIntent.setClassName(PACKAGE_NAME,"${PACKAGE_NAME}.processor.ProcessorTrainingService")
+            trainingIntent.setClassName(PACKAGE_NAME,SapphireUtils().CLASSIFIER_TRAINING_SERVICE)
             startService(trainingIntent)
             return null
         }else{
@@ -109,9 +117,14 @@ class ProcessorService: SapphireFrameworkService(){
         return entityList as ArrayList<String>
     }
 
+    fun trainClassifier(){
+        var intent = Intent().setClassName(this,SapphireUtils().CLASSIFIER_TRAINING_SERVICE)
+        startService(intent)
+    }
+
     fun trainEntityClassifier(){
         var testIntent = Intent().setAction("action.athena.TEST")
-        testIntent.setClassName(this,"net.carrolltech.athena.processor.ProcessorEntityTrainingService")
+        testIntent.setClassName(this,SapphireUtils().ENTITY_TRAINING_SERVICE)
         startService(testIntent)
     }
 

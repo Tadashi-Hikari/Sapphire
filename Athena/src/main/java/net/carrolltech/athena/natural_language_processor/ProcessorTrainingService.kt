@@ -3,6 +3,7 @@ package net.carrolltech.athena.natural_language_processor
 import android.content.Intent
 import edu.stanford.nlp.classify.ColumnDataClassifier
 import net.carrolltech.athena.framework.SapphireFrameworkService
+import net.carrolltech.athena.framework.SapphireUtils
 import java.io.*
 import java.lang.Exception
 import java.util.*
@@ -14,7 +15,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.v("ProcessorTrainingService started")
         try{
-            when(intent!!.action) {
+            when(intent?.action) {
                 else -> train (intent)
             }
         }catch(exception: Exception){
@@ -94,7 +95,7 @@ class ProcessorTrainingService: SapphireFrameworkService(){
             saveClassifier(classifier)
 
             // Return to the main Processor portion
-            var intent = Intent().setClassName(this,"net.carrolltech.athena.processor.ProcessorService")
+            var intent = Intent().setClassName(this,SapphireUtils().PROCESSOR_SERVICE)
             startService(intent)
         } catch (exception: Exception){
             exception.printStackTrace()

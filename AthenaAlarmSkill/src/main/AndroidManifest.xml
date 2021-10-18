@@ -15,7 +15,7 @@
             android:name=".AlarmService"
             android:exported="true">
             <intent-filter>
-                <action android:name="action.athena.skill.INITIALIZE"/>
+                <action android:name="action.athena.skill.INITIALIZE" />
             </intent-filter>
         </service>
     </application>

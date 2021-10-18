@@ -87,9 +87,9 @@ class MainActivity: Activity()
 
     fun sendTestMessage(view: View){
         var editText= findViewById<EditText>(R.id.testInput)
-        var testTextIntent = Intent().setAction("action.athena.TEST_INPUT")
-        testTextIntent.setClassName(this,"net.carrolltech.athena.tts_service.SimpleTensorflowEngine")
-        testTextIntent.putExtra("text",editText.text.toString())
+        var testTextIntent = Intent().setClassName(this,SapphireUtils().CORE_SERVICE)
+        testTextIntent.putExtra(SapphireUtils().FROM,SapphireUtils().STT_ANDROID_SERVICE)
+        testTextIntent.putExtra(SapphireUtils().MESSAGE,editText.text.toString())
         startService(testTextIntent)
     }
 

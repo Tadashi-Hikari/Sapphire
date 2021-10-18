@@ -44,7 +44,8 @@
 
         <service
             android:name=".natural_language_processor.ProcessorService"
-            android:process=":ProcessorCentralService" />
+            android:process=":ProcessorCentralService"
+            android:exported="true"/>
         <service
             android:name=".natural_language_processor.ProcessorTrainingService"
             android:process=":ProcessorTrainingService" />

@@ -19,15 +19,17 @@ import android.util.Log
 
 class AlarmService: Service(){
 
-    // This should be the entry point for the whole skill?
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
             "action.athena.skill.INITIALIZE" -> initialize()
             else -> (intent)
         }
 
-        // This isn't something that needs to run for a long time, so just break the binding when done
-        stopSelf()
+       return super.onStartCommand(intent, flags, startId)
+    }
+
+    // This should be the entry point for the whole skill?
+    override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
@@ -59,7 +61,7 @@ class AlarmService: Service(){
         startService(speakIntent)
     }
 
-    fun readAlarm(intent: Intent){}
-    fun updateAlarm(intent: Intent){}
-    fun deleteAlarm(intent: Intent){}
+    //fun readAlarm(intent: Intent){}
+    //fun updateAlarm(intent: Intent){}
+    //fun deleteAlarm(intent: Intent){}
 }

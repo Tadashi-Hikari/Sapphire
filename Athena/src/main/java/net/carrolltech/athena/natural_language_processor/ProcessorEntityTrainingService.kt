@@ -210,6 +210,7 @@ class ProcessorEntityTrainingService: SapphireFrameworkService() {
         return CRFClassifier.getClassifier("filename")
     }
 
+    // I'm just doing this here directly in Athena, for simplicity
     fun getAssetFiles(type: String): List<String>{
         // This will exist in *every* Athena skill
         var intent = Intent().setAction(INITIALIZE)

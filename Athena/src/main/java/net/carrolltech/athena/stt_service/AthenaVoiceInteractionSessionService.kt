@@ -35,7 +35,7 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
         )
         super.onCreate()
         System.loadLibrary("kaldi_jni");
-        // This is what is initing the STT
+        // This is what is initiating the STT
         setup()
     }
 
@@ -45,8 +45,8 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
         // This says "What can  I do for you" after every time you say "Sapphire". It may be a bit extra
         ttsIntent.putExtra("SPEAKING_PAYLOAD", "What can I do for you")
         ttsIntent.setClassName(this,SapphireUtils().CORE_SERVICE)
-        startService(ttsIntent)
         // This is an issue, because it overlaps w/ Athena talking
+        //startService(ttsIntent)
 
         recognizer.startListening()
         return super.onStartCommand(intent, flags, startId)
@@ -84,7 +84,8 @@ class AthenaVoiceInteractionSessionService: RecognitionListener, VoiceInteractio
         recognizer.stop()
         if(hypothesisJson.getString("text").isNotBlank()){
             Log.i(this.javaClass.simpleName, "Result: ${hypothesisJson.getString("text")}")
-            var processIntent = Intent().setClassName(this,SapphireUtils().PROCESSOR_SERVICE)
+            var processIntent = Intent().setClassName(this,SapphireUtils().CORE_SERVICE)
+            processIntent.putExtra(SapphireUtils().FROM,SapphireUtils().STT_ANDROID_SERVICE)
             processIntent.putExtra(MESSAGE,hypothesisJson.getString("text"))
             startService(processIntent)
         }

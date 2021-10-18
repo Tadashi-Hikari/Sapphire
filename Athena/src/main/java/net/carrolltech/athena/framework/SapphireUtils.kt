@@ -4,6 +4,8 @@ class SapphireUtils{
     val CORE_SERVICE="net.carrolltech.athena.core.CoreService"
     val REGISTRATION_SERVICE="net.carrolltech.athena.core.CoreRegistrationService"
     val PROCESSOR_SERVICE="net.carrolltech.athena.natural_language_processor.ProcessorService"
+    val ENTITY_TRAINING_SERVICE="net.carrolltech.athena.natural_language_processor.ProcessorEntityTrainingService"
+    val CLASSIFIER_TRAINING_SERVICE="net.carrolltech.athena.natural_language_processor.ProcessorTrainingService"
     val TTS_SERVICE="net.carrolltech.athena.tts_service."
     val MAIN_ACTIVITY="net.carrolltech.athena.tts_service.MainActivity"
     val TTS_ACTUAL_SERVICE="net.carrolltech.athena.tts_service.tts.AthenaActualTextToSpeechService"
@@ -66,6 +68,7 @@ class SapphireUtils{
     val ACTION_SAPPHIRE_TRAIN="assistant.framework.processor.action.TRAIN"
     val ACTION_SAPPHIRE_INITIALIZE="assistant.framework.processor.action.INITIALIZE"
     val ACTION_SAPPHIRE_TEST="assistant.framework.processor.action.TEST"
+    val ACTION_SAPPHIRE_PROCESSOR_TRAIN="assistant.framework.processor.action.TRAIN"
     val ACTION_SAPPHIRE_SPEAK="assistant.framework.core.action.SPEAK"
 
     // Work in progress
