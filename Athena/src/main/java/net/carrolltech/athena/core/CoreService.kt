@@ -33,10 +33,6 @@ import java.util.*
 
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
-	// Is there a better place to put these state variables?
-	var utterance: String? = null
-	var textToSpeech: TextToSpeech? = null
-
 	// This should be thread safe... Should I shut it down when not in use? or is that too resource intense
 	override fun onInit(status: Int) {
 		if(utterance != null) {
@@ -48,6 +44,10 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 			)
 		}
 	}
+
+	// Is there a better place to put these state variables?
+	var utterance: String? = null
+	var textToSpeech: TextToSpeech? = null
 
 	//State variables
 	var initialized = false
@@ -188,9 +188,17 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	}
 
 	// This will be used to start those bound modules
-	fun sendToExternalModule(){
-		var outgoingIntent = Intent()
-		bindService(outgoingIntent,connection,Context.BIND_AUTO_CREATE)
+	fun sendToExternalModule(name: String, intent: Intent){
+		//var jsonDictionary = loadTable(SapphireUtils().PENDING_INTENT_TABLE)
+		// This is just pseudocode
+		if(pendingIntentLedger.containsKey(name)){
+			var pendingIntent = pendingIntentLedger.get(name)!!
+			// do the thing. Update the information
+			pendingIntent.send(this,13,intent)
+		}else{
+			var outgoingIntent = Intent()
+			bindService(outgoingIntent,connection,Context.BIND_AUTO_CREATE)
+		}
 	}
 
 	// This isn't designed to initialize from being set as the assistant. I need to change that

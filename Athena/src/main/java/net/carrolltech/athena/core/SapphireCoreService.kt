@@ -22,6 +22,7 @@ abstract class SapphireCoreService: SapphireFrameworkService(){
 
 	private var REGISTRATION_TABLE = "registration.tbl"
 	private val DEFAULT_MODULES_TABLE = "defaultmodules.tbl"
+	private val PENDING_INTENT_TABLE = "pendingintent.tbl"
 	private val STARTUP_TABLE = "background.tbl"
 	private val ROUTE_TABLE = "routetable.tbl"
 	private val ALIAS_TABLE = "alias.tbl"

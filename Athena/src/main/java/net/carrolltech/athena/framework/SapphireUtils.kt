@@ -14,6 +14,13 @@ class SapphireUtils{
     val SAPPHIRE_ALARM_SKILL="net.carrolltech.athenaalarmskill.AlarmService"
 
 
+    var REGISTRATION_TABLE = "registration.tbl"
+    val DEFAULT_MODULES_TABLE = "defaultmodules.tbl"
+    val PENDING_INTENT_TABLE = "pendingintent.tbl"
+    val STARTUP_TABLE = "background.tbl"
+    val ROUTE_TABLE = "routetable.tbl"
+    val ALIAS_TABLE = "alias.tbl"
+
     val MESSAGE="assistant.framework.protocol.MESSAGE"
     val STDERR="assistant.framework.protocol.STDERR"
     // This is going to be for ENV_VARIABLES

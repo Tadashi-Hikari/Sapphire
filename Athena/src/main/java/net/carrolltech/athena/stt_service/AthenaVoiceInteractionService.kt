@@ -1,6 +1,7 @@
 package net.carrolltech.athena.stt_service
 
 import android.content.Intent
+import android.os.Build
 import android.service.voice.VoiceInteractionService
 import android.util.Log
 import net.carrolltech.athena.framework.SapphireUtils
@@ -26,7 +27,11 @@ class AthenaVoiceInteractionService: RecognitionListener, VoiceInteractionServic
         var intent = Intent().setAction(SapphireUtils().ACTION_SAPPHIRE_SPEAK)
         intent.putExtra("SPEAKING_PAYLOAD","Hello there, I am Sapphire.")
         intent.setClassName(this, SapphireUtils().CORE_SERVICE)
-        startService(intent)
+        if(Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(intent)
+        }else{
+            startService(intent)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
