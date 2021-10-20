@@ -116,6 +116,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		when (initialized) {
 			true -> when (intent.action) {
 				SapphireUtils().ACTION_SAPPHIRE_SPEAK -> speakToUser(intent)
+				"action.athena.core.PENDING_INTENT" -> updatePendingIntentLedger(intent)
 				else -> pathProcessing(intent)
 			}
 			false -> when (intent.action) {
@@ -129,16 +130,27 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 	}
 
-	// This is just here to remind me that I need to break the binding to services if they run too long
-	fun breakBinding(){
-
-	}
-
 	// This needs a better naming scheme
 	fun speakToUser(intent: Intent){
 		// I think I accidentally deleted this component
 		utterance = intent.getStringExtra("SPEAKING_PAYLOAD")
 		textToSpeech = TextToSpeech(this,this)
+	}
+
+	// Add something to the ledger. NEEDS TO BE FINISHED
+	fun updatePendingIntentLedger(intent: Intent){
+		if(intent.hasExtra(SapphireUtils().PENDING_INTENT)){
+			try {
+				pendingIntentLedger.put(
+					"placeholder",
+					intent.getParcelableExtra<PendingIntent>(SapphireUtils().PENDING_INTENT)!!
+				)
+			}catch(exception: Exception){
+				Log.e("What is this? The PendingIntent data isn't right")
+			}
+		}else{
+			Log.w("There is some kind of error. This intent didn't contain a PendingIntent. Why did it come here?")
+		}
 	}
 
 	// Can this be wrapped in to nextModule or handleNewInput

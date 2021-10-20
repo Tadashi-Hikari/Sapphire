@@ -13,6 +13,8 @@ class SapphireUtils{
     val STT_ANDROID_SERVICE="net.carrolltech.athena.stt_service.AthenaVoiceInteractionSessionService"
     val SAPPHIRE_ALARM_SKILL="net.carrolltech.athenaalarmskill.AlarmService"
 
+    val PENDING_INTENT = "assistant.framework.module.protocol.PENDING_INTENT"
+
 
     var REGISTRATION_TABLE = "registration.tbl"
     val DEFAULT_MODULES_TABLE = "defaultmodules.tbl"
