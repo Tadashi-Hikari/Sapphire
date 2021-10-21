@@ -58,8 +58,12 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 	// and this. Though this is kind of a 'fake' connection
 	// Shit. I think I need one of these for EVERY connection
 	var connection = Connection()
-	// This holds the available modules. It's close to a registry, and I hate everything about it
+	// This holds the available PendingIntents. It's close to a registry, and I hate everything about it
 	var pendingIntentLedger = mutableMapOf<String,PendingIntent>()
+	// This matches a PendingIntent component to its ID
+	var idLedger = JSONObject()
+	// This just holds components we're waiting for the pending intent for
+	var actionQueue = mutableListOf<String>()
 
 	override fun onCreate() {
 		super.onCreate()
@@ -137,20 +141,36 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		textToSpeech = TextToSpeech(this,this)
 	}
 
-	// Add something to the ledger. NEEDS TO BE FINISHED
+	fun generateId():Int{
+		// I should probably do a check to make sure this is unique
+		var id = Random().nextInt()
+		return id
+	}
+
+	// This is the returned intent...
 	fun updatePendingIntentLedger(intent: Intent){
 		if(intent.hasExtra(SapphireUtils().PENDING_INTENT)){
 			try {
+				// -1 means there is some kind of error
+				var id = intent.getIntExtra(SapphireUtils().ID,-1)
+				// This needs error checking
+				var className = idLedger.getString(id.toString())
 				pendingIntentLedger.put(
-					"placeholder",
+					className,
 					intent.getParcelableExtra<PendingIntent>(SapphireUtils().PENDING_INTENT)!!
 				)
+				var pendingIntent = intent.getParcelableExtra<PendingIntent>(SapphireUtils().PENDING_INTENT)!!
+				checkQueue()
 			}catch(exception: Exception){
 				Log.e("What is this? The PendingIntent data isn't right")
 			}
 		}else{
 			Log.w("There is some kind of error. This intent didn't contain a PendingIntent. Why did it come here?")
 		}
+	}
+
+	fun checkQueue(){
+
 	}
 
 	// Can this be wrapped in to nextModule or handleNewInput
@@ -172,44 +192,46 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 	}
 
-	// This is used for tracking a flow through the assistant
-	fun generateFlowID():String{
-		return "1"
-	}
-
 	fun pathProcessing(intent: Intent){
 		Log.d("Doing path processing")
+		// This is for the fixed path
 		if(intent?.getStringExtra(SapphireUtils().FROM) == SapphireUtils().STT_ANDROID_SERVICE){
 			var newIntent = Intent(intent)
 			newIntent.setClassName(this,SapphireUtils().PROCESSOR_SERVICE)
 			Log.d("Sending to processor service")
 			startService(newIntent)
-		}else {
+		}else{
 			Log.d("Intent died in pathProcessing. Sending to alarm as a default")
 			// This is just for me
 			var alarmIntent = Intent().setClassName("net.carrolltech.athenaalarmskill",SapphireUtils().SAPPHIRE_ALARM_SKILL)
-			startService(alarmIntent)
-			//bindService(alarmIntent,connection,Context.BIND_AUTO_CREATE)
+			// This is doing the heavy lifting for hte PendingIntent verification
+			sendToExternalModule(alarmIntent)
 		}
-		//var path = checkID(intent.getStringExtra("ID")!!)
-		//unbindPriorService("service")
-		// send to chosen intent
-		//if(intent.hasExtra("ENTITIES")){
-		//	Log.d(intent.getStringArrayListExtra("ENTITIES").toString())
-		//}
 	}
 
 	// This will be used to start those bound modules
-	fun sendToExternalModule(name: String, intent: Intent){
+	fun sendToExternalModule(intent: Intent){
 		//var jsonDictionary = loadTable(SapphireUtils().PENDING_INTENT_TABLE)
-		// This is just pseudocode
-		if(pendingIntentLedger.containsKey(name)){
-			var pendingIntent = pendingIntentLedger.get(name)!!
-			// do the thing. Update the information
-			pendingIntent.send(this,13,intent)
+		// this will get the classname, which can be used as a UID
+		if(intent.component != null){
+			var name = intent.component?.className
+			if(pendingIntentLedger.containsKey(name)){
+				var pendingIntent = pendingIntentLedger.get(name)!!
+				// do the thing. Update the information
+				pendingIntent.send(this,13,intent)
+			}else{
+				// This will need to be fixed. This name isn't ensured to be the package that gives the pending intent. I may need to use the registration service
+				var outgoingIntent = Intent().setClassName(this,name!!)
+				// This is the UID that will be sent to/returned from the module so I know what I'm tracking
+				var id = generateId()
+				outgoingIntent.putExtra(SapphireUtils().ID,id)
+				bindService(outgoingIntent,connection,Context.BIND_AUTO_CREATE)
+				// Add it to be dispatched upon return. Can I just check the ID instead? No because the ID is for PendingIntents so the record must stay intact
+				actionQueue.add(outgoingIntent.component!!.className)
+
+			}
 		}else{
-			var outgoingIntent = Intent()
-			bindService(outgoingIntent,connection,Context.BIND_AUTO_CREATE)
+			Log.e("This intent isn't set up to go to an external module")
 		}
 	}
 

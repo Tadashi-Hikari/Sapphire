@@ -21,9 +21,6 @@ import android.util.Log
 
 class AlarmService: Service(){
 
-    // This ID is what will be used by CoreService to reference the pending intent. It should come from core service
-    val ID = 24
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
             "action.athena.skill.INITIALIZE" -> initialize()
@@ -35,13 +32,15 @@ class AlarmService: Service(){
 
     // This should be the entry point for the whole skill?
     override fun onBind(intent: Intent?): IBinder? {
-        // This doesn't interfere w/ the Devs useage of Bind. but i can be opted out of with an 'if'. Will that cause issues?
-        var thisIntent = Intent().setClassName(this,"net.carrolltech.athenaalarmskill.AlarmService")
         // This should have the ability to update, since Core will add new data. I think this works right....
-        var pendingIntent = getService(this,ID,thisIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-        var returnIntent = Intent().setClassName(this,"net.carrolltech.athena.core.CoreService")
-        returnIntent.putExtra("PendingIntent",pendingIntent)
-        startService(returnIntent)
+        if(intent?.hasExtra("assistant.framework.module.protocol.ID") == true){
+            var id = intent.getIntExtra("assistant.framework.module.protocol.ID",-1)
+            var thisIntent = Intent().setClassName(this,"net.carrolltech.athenaalarmskill.AlarmService")
+            var pendingIntent = getService(this,id,thisIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+            var returnIntent = Intent().setClassName(this,"net.carrolltech.athena.core.CoreService")
+            returnIntent.putExtra("assistant.framework.module.protocol.PENDING_INTENT",pendingIntent)
+            startService(returnIntent)
+        }
         return null
     }
 

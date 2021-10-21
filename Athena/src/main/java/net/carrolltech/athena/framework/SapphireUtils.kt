@@ -15,7 +15,6 @@ class SapphireUtils{
 
     val PENDING_INTENT = "assistant.framework.module.protocol.PENDING_INTENT"
 
-
     var REGISTRATION_TABLE = "registration.tbl"
     val DEFAULT_MODULES_TABLE = "defaultmodules.tbl"
     val PENDING_INTENT_TABLE = "pendingintent.tbl"
