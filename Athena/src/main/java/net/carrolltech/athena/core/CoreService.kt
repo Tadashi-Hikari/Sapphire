@@ -7,10 +7,8 @@ import android.content.*
 import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import net.carrolltech.athena.R
-import net.carrolltech.athena.framework.SapphireFrameworkService
 import net.carrolltech.athena.framework.SapphireUtils
 import org.json.JSONObject
 import java.util.*
@@ -28,7 +26,7 @@ import java.util.*
  */
 
 /**
- * There is possibliity that this is a priveledged service, as it resides in the same package as the assistant special service
+ * There is possiblity that this is a priveledged service, as it resides in the same package as the assistant special service
  */
 
 class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
@@ -143,7 +141,8 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 
 	fun generateId():Int{
 		// I should probably do a check to make sure this is unique
-		var id = Random().nextInt()
+		var id = Random().nextInt(1000)
+		Log.v("The assigned ID is ${id}")
 		return id
 	}
 
@@ -159,17 +158,32 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 					className,
 					intent.getParcelableExtra<PendingIntent>(SapphireUtils().PENDING_INTENT)!!
 				)
+				Log.v("I've added PendingIntent ID:${id} to the pendingIntentLedger")
 				var pendingIntent = intent.getParcelableExtra<PendingIntent>(SapphireUtils().PENDING_INTENT)!!
-				checkQueue()
+				// This will not work forever. It's just a quick hack that will only work for now
+				checkQueue(id)
 			}catch(exception: Exception){
 				Log.e("What is this? The PendingIntent data isn't right")
+				Log.e(exception.toString())
 			}
 		}else{
 			Log.w("There is some kind of error. This intent didn't contain a PendingIntent. Why did it come here?")
 		}
 	}
 
-	fun checkQueue(){
+	fun checkQueue(id: Int){
+		while(actionQueue.isNotEmpty()){
+			// This *might* be very inefficent, depending on the data structure
+			var compontentName = actionQueue.removeAt(0)
+			if(pendingIntentLedger.containsKey(compontentName)){
+				Log.v("A PendingIntent was found in the ledger for ${compontentName}")
+				var pendingIntent = pendingIntentLedger.get(compontentName)
+				// This works, because we've changed the context to make it this app
+				pendingIntent!!.send(this,id,null)
+			}else{
+				Log.v("There is not a PendingIntent in the ledger for ${compontentName}")
+			}
+		}
 
 	}
 
@@ -220,15 +234,19 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				// do the thing. Update the information
 				pendingIntent.send(this,13,intent)
 			}else{
-				// This will need to be fixed. This name isn't ensured to be the package that gives the pending intent. I may need to use the registration service
-				var outgoingIntent = Intent().setClassName(this,name!!)
+				// This will need to be fixed. This name isn't ensured to be the package that gives back the pending intent. I may need to use the registration service
+				// get package name &
+				Log.v("There isn't a key in the ledger. Request the PendingIntent")
+				// It's an external package, so I had to add this
+				var outgoingIntent = Intent().setClassName("net.carrolltech.athenaalarmskill",name!!)
 				// This is the UID that will be sent to/returned from the module so I know what I'm tracking
 				var id = generateId()
 				outgoingIntent.putExtra(SapphireUtils().ID,id)
+				// Use the ID as a reference to find the component it's going to
+				idLedger.put(id.toString(),outgoingIntent.component!!.className)
 				bindService(outgoingIntent,connection,Context.BIND_AUTO_CREATE)
 				// Add it to be dispatched upon return. Can I just check the ID instead? No because the ID is for PendingIntents so the record must stay intact
 				actionQueue.add(outgoingIntent.component!!.className)
-
 			}
 		}else{
 			Log.e("This intent isn't set up to go to an external module")

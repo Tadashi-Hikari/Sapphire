@@ -61,8 +61,8 @@
             android:permission="android.permission.BIND_VOICE_INTERACTION">
             <meta-data
                 android:name="android.voice_interaction"
-                android:resource="@xml/interaction_service" />
-
+                android:resource="@xml/interaction_service">
+            </meta-data>
             <intent-filter>
                 <action android:name="android.service.voice.VoiceInteractionService" />
             </intent-filter>

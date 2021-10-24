@@ -24,7 +24,10 @@ class AlarmService: Service(){
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
             "action.athena.skill.INITIALIZE" -> initialize()
-            else -> (intent)
+            else -> {
+                Log.v("AlarmSkill","Exceuted, but there was nothing to do")
+                createAlarm(intent)
+            }
         }
 
        return super.onStartCommand(intent, flags, startId)
@@ -37,8 +40,12 @@ class AlarmService: Service(){
             var id = intent.getIntExtra("assistant.framework.module.protocol.ID",-1)
             var thisIntent = Intent().setClassName(this,"net.carrolltech.athenaalarmskill.AlarmService")
             var pendingIntent = getService(this,id,thisIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-            var returnIntent = Intent().setClassName(this,"net.carrolltech.athena.core.CoreService")
+            var returnIntent = Intent().setClassName("net.carrolltech.athena","net.carrolltech.athena.core.CoreService")
             returnIntent.putExtra("assistant.framework.module.protocol.PENDING_INTENT",pendingIntent)
+            returnIntent.putExtra("assistant.framework.module.protocol.ID",id)
+            // This is what lets the CoreService know what's up
+            returnIntent.setAction("action.athena.core.PENDING_INTENT")
+            Log.v("AthenaAlarmSkill","Returning a PendingIntent to CoreService")
             startService(returnIntent)
         }
         return null
@@ -56,18 +63,19 @@ class AlarmService: Service(){
         // Hour, minute, & seconds fall under time... How do i parse them?
         // I could use SUTime
         // timedate(Hour, minute, seconds?) (timer?)(yes,no), message, day-of-week, repeat,
-        var hour = 0; var minutes = 0
+        var hour = 5; var minutes = 0
 
         alarmIntent.putExtra(AlarmClock.EXTRA_HOUR, hour)
         alarmIntent.putExtra(AlarmClock.EXTRA_MINUTES, minutes)
         alarmIntent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
         alarmIntent.putExtra(AlarmClock.EXTRA_MESSAGE, "This alarm was set by your assistant, Athena")
-       //startService(alarmIntent)
+        //startService(alarmIntent)
 
         // I can send this back to the TTS service, to notify me
         Log.v(this.javaClass.name,"Alarm set for ${hour}:${minutes}")
         //speak(time)
-        var speakIntent = Intent().setClassName(this,"net.carrolltech.athena.CoreService")
+        var speakIntent = Intent().setClassName("net.carrolltech.athena","net.carrolltech.athena.core.CoreService")
+        speakIntent.setAction("assistant.framework.core.action.SPEAK")
         speakIntent.putExtra("SPEAKING_PAYLOAD","Alright, an alarm has been set for you")
         startService(speakIntent)
     }
