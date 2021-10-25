@@ -118,6 +118,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		when (initialized) {
 			true -> when (intent.action) {
 				SapphireUtils().ACTION_SAPPHIRE_SPEAK -> speakToUser(intent)
+				// This needs to be moved to SapphireUtils()
 				"action.athena.core.PENDING_INTENT" -> updatePendingIntentLedger(intent)
 				else -> pathProcessing(intent)
 			}
@@ -161,7 +162,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				Log.v("I've added PendingIntent ID:${id} to the pendingIntentLedger")
 				var pendingIntent = intent.getParcelableExtra<PendingIntent>(SapphireUtils().PENDING_INTENT)!!
 				// This will not work forever. It's just a quick hack that will only work for now
-				checkQueue(id)
+				checkQueue()
 			}catch(exception: Exception){
 				Log.e("What is this? The PendingIntent data isn't right")
 				Log.e(exception.toString())
@@ -171,11 +172,14 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 	}
 
-	fun checkQueue(id: Int){
+	fun checkQueue(){
+		// Is there a reason I wouldn't want to execute this immediately?
 		while(actionQueue.isNotEmpty()){
 			// This *might* be very inefficent, depending on the data structure
 			var compontentName = actionQueue.removeAt(0)
 			if(pendingIntentLedger.containsKey(compontentName)){
+				// I need to error check this, cause there could be a lack of ID
+				var id = idLedger.getString(compontentName).toInt()
 				Log.v("A PendingIntent was found in the ledger for ${compontentName}")
 				var pendingIntent = pendingIntentLedger.get(compontentName)
 				// This works, because we've changed the context to make it this app
@@ -244,6 +248,8 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 				outgoingIntent.putExtra(SapphireUtils().ID,id)
 				// Use the ID as a reference to find the component it's going to
 				idLedger.put(id.toString(),outgoingIntent.component!!.className)
+				// This is just a hack to make it easy to look up by className or ID
+				idLedger.put(outgoingIntent.component!!.className,id.toString())
 				bindService(outgoingIntent,connection,Context.BIND_AUTO_CREATE)
 				// Add it to be dispatched upon return. Can I just check the ID instead? No because the ID is for PendingIntents so the record must stay intact
 				actionQueue.add(outgoingIntent.component!!.className)

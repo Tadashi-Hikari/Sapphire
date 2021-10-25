@@ -17,6 +17,11 @@ import kotlin.random.Random
 
 class TermuxBridgeService: Service(){
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        termuxStuff(intent)
+        return super.onStartCommand(intent, flags, startId)
+    }
+
     override fun onBind(intent: Intent?): IBinder? {
         when(intent?.action){
             "action.athena.skill.INITIALIZE" -> initialize()
@@ -25,7 +30,7 @@ class TermuxBridgeService: Service(){
         return null
     }
 
-    fun termuxStuff(){
+    fun termuxStuff(intent: Intent?){
         // This is requried for a termux intent
         var one = "RUN_COMMAND_SERVICE.EXTRA_COMMAND_PATH"
         // For start flags, not stdin
