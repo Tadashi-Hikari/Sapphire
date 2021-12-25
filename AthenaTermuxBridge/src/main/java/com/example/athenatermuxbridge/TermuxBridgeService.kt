@@ -43,6 +43,7 @@ class TermuxBridgeService: Service(){
         var script = "am 'this.service.class"
     }
 
+    // Termux actually has native support for PendingIntent, so I just need to work from w/i there
     fun sendPendingIntent(){
         Log.v(this.javaClass.name,"Termux bridge initializing")
         // Nothing special here, just a PendingIntent for this service
