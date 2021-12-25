@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Athena" />
+            <option value="$PROJECT_DIR$/Athena/AthenaTranscribeSkill" />
             <option value="$PROJECT_DIR$/AthenaAlarmSkill" />
             <option value="$PROJECT_DIR$/AthenaRepeatSkill" />
             <option value="$PROJECT_DIR$/AthenaTermuxBridge" />
