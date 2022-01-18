@@ -14,9 +14,9 @@
             <option value="$PROJECT_DIR$/Athena/AthenaTranscribeSkill" />
             <option value="$PROJECT_DIR$/AthenaAlarmSkill" />
             <option value="$PROJECT_DIR$/AthenaRepeatSkill" />
-            <option value="$PROJECT_DIR$/AthenaTermuxBridge" />
             <option value="$PROJECT_DIR$/AthenaWeatherSkill" />
-            <option value="$PROJECT_DIR$/GoogleAssistantIntegration" />
+            <option value="$PROJECT_DIR$/GoogleBridge" />
+            <option value="$PROJECT_DIR$/TermuxBridge" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
