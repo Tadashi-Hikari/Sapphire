@@ -25,12 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Athena">
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name=".sapphire_ui.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.Athena.NoActionBar" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".sapphire_ui.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Athena.NoActionBar">
             <intent-filter>
@@ -43,20 +43,20 @@
         </activity>
 
         <service
-            android:name=".natural_language_processor.ProcessorService"
+            android:name=".sapphire_nlp.ProcessorService"
             android:process=":ProcessorCentralService"
             android:exported="true"/>
         <service
-            android:name=".natural_language_processor.ProcessorTrainingService"
+            android:name=".sapphire_nlp.ProcessorTrainingService"
             android:process=":ProcessorTrainingService" />
         <service
-            android:name=".natural_language_processor.ProcessorEntityTrainingService"
+            android:name=".sapphire_nlp.ProcessorEntityTrainingService"
             android:process=":ProcessorEntityTrainingService" />
         <service
-            android:name=".core.CoreService"
+            android:name=".sapphire_core.CoreService"
             android:exported="true" />
         <service
-            android:name=".stt_service.AthenaVoiceInteractionService"
+            android:name=".android_stt_service.AthenaVoiceInteractionService"
             android:exported="true"
             android:permission="android.permission.BIND_VOICE_INTERACTION">
             <meta-data
@@ -68,10 +68,10 @@
             </intent-filter>
         </service>
         <service
-            android:name=".stt_service.AthenaVoiceInteractionSessionService"
+            android:name=".android_stt_service.AthenaVoiceInteractionSessionService"
             android:permission="android.permission.BIND_VOICE_INTERACTION"
             android:process=":SessionService" />
-        <service android:name=".stt_service.AthenaRecognitionService">
+        <service android:name=".android_stt_service.AthenaRecognitionService">
             <meta-data
                 android:name="android.speech"
                 android:resource="@xml/recognition_service" />
@@ -87,7 +87,7 @@ This bullshit. Android restricts the TTS to a single thread, which kills the Ten
         the actual TTS service
         -->
         <service
-            android:name=".tts_service.tts.AthenaTextToSpeechService"
+            android:name=".android_tts_service.tts.AthenaTextToSpeechService"
             android:exported="true"
             android:process=":ttsProxy">
             <intent-filter>
@@ -99,10 +99,10 @@ This bullshit. Android restricts the TTS to a single thread, which kills the Ten
                 android:resource="@xml/tts_engine" />
         </service>
         <service
-            android:name=".tts_service.tts.AthenaActualTextToSpeechService"
+            android:name=".android_tts_service.tts.AthenaActualTextToSpeechService"
             android:exported="true" />
         <service
-            android:name=".core.CoreRegistrationService"
+            android:name=".sapphire_core.CorePersistentMemory"
             android:exported="true" />
     </application>
 
