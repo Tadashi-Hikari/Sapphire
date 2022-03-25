@@ -1,4 +1,4 @@
-package net.carrolltech.athena.sapphire_core.utilityObjects;
+package net.carrolltech.athena.essence.Body;
 
 import androidx.annotation.NonNull;
 
@@ -26,14 +26,14 @@ public class Pipeline {
         return Arrays.asList(pipelineString.split(","));
     }
 
-    public void Next(){
+    public void next(){
         index++;
         setPackageName(index);
         setClassName(index);
     }
 
     // I need to do error check if it is at 0
-    public void Last(){
+    public void last(){
         index--;
         setPackageName(index);
         setClassName(index);

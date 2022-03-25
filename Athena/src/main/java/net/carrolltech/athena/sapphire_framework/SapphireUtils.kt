@@ -32,7 +32,7 @@ abstract class SapphireUtils{
     val FROM= "assistant.framework.protocol.FROM"
     val ID = "assistant.framework.module.protocol.ID"
     // This shouldn't be needed, since ID can track it
-    val RECEIPIANT = "assistant.framework.module.protocol.RECEIPIANT"
+    val RECIPIENT = "assistant.framework.module.protocol.RECIPIENT"
 
     // Maybe this should be used elsewhere...
     var STARTUP_ROUTE = "assistant.framework.protocol.STARTUP_ROUTE"

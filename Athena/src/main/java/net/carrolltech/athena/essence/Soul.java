@@ -1,4 +1,4 @@
-package net.carrolltech.athena.sapphire_core;
+package net.carrolltech.athena.essence;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,18 +10,24 @@ import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.RequiresApi;
 
+import net.carrolltech.athena.essence.Body.Memory;
+import net.carrolltech.athena.essence.Body.State;
+
 /*
+Prototype name: Soul
+Actual name: CoreDaemon
+
  This is a lightweight service that handles three things. 1) handling the init and lifecycle of the core,
  2) holding volatile state variables (via the CoreState static object) and 3) displaying the user notification
  */
 
-public class CoreDaemon extends Service {
+public class Soul extends Service {
 
+    State state = null;
     // This is persistent memory
-    CorePersistentMemory memory = null;
-    // State should maintain itself in a File, in case the application is killed
-    CoreState state = null;
-    CoreInterpreter interpreter = null;
+    Memory memory = null;
+    // CoreInterpreter could also be seen as 'thought process'
+    Mind interpreter = null;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -30,10 +36,9 @@ public class CoreDaemon extends Service {
 
         // Should I run all of these in StateThread?
         // This is the initialization
-        interpreter = new CoreInterpreter();
-        memory = new CorePersistentMemory();
-        // This seems suuuuper dangerous. I'm setting the variable, but anyone can modify it
-        CoreState.context = this.getBaseContext();
+        interpreter = new Mind();
+        memory = new Memory();
+        state = State.getReference(); // This gives CoreDaemon the state object reference to hold in memory.
 
         // I could probably wait to start these services
         // Also, I can pause them when the user hasn't used the assistant
@@ -63,7 +68,7 @@ public class CoreDaemon extends Service {
         try {
             // This.... shouldnt be here?
             //CoreState.pendingIntentLedger.add(intent.getParcelableExtra("assistant.framework.module.protocol.PENDING_INTENT"));
-            CoreState.taskQueue.add(intent);
+            State.taskQueue.add(intent);
         }catch (Exception e){
             System.out.println("--------------------------------------------------------------");
             e.printStackTrace();

@@ -1,8 +1,8 @@
-package net.carrolltech.athena.sapphire_core;
+package net.carrolltech.athena.essence.Body;
 
 // This is not yet implemented, but will be at some point
 
-public class CoreUDPServer implements Runnable{
+public class UDPServer implements Runnable{
 
     @Override
     public void run() {

@@ -53,7 +53,7 @@
             android:name=".sapphire_nlp.ProcessorEntityTrainingService"
             android:process=":ProcessorEntityTrainingService" />
         <service
-            android:name=".sapphire_core.CoreService"
+            android:name=".essence.CoreService"
             android:exported="true" />
         <service
             android:name=".android_stt_service.AthenaVoiceInteractionService"
@@ -102,7 +102,7 @@ This bullshit. Android restricts the TTS to a single thread, which kills the Ten
             android:name=".android_tts_service.tts.AthenaActualTextToSpeechService"
             android:exported="true" />
         <service
-            android:name=".sapphire_core.CorePersistentMemory"
+            android:name=".essence.CorePersistentMemory"
             android:exported="true" />
     </application>
 

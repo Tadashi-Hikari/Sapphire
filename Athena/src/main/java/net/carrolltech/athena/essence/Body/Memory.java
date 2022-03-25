@@ -1,8 +1,4 @@
-package net.carrolltech.athena.sapphire_core;
-
-import net.carrolltech.athena.sapphire_core.utilityObjects.CoreUtilities;
-import net.carrolltech.athena.sapphire_core.utilityObjects.Pipeline;
-import net.carrolltech.athena.sapphire_framework.SapphireFrameworkService;
+package net.carrolltech.athena.essence.Body;
 
 import org.json.JSONObject;
 
@@ -11,7 +7,7 @@ import java.util.Map;
 
 // All data should be stored persistently, to withstand the OS killing Sapphire
 
-class CorePersistentMemory extends SapphireFrameworkService{
+public class Memory{
 
     // All known available routes, with String names. The state is held in CoreState.activeIds
     /*
@@ -22,7 +18,7 @@ class CorePersistentMemory extends SapphireFrameworkService{
     public static Map<String, Pipeline> pipelines = null;
     public static Map<String, JSONObject> moduleInfo = null;
 
-    public CorePersistentMemory(){
+    public Memory(){
         loadPipelines();
         // I don't know if I want to do this, but it might be needed for knowing what runs in the background, and what in the foreground
         //loadAvailableModules();
@@ -30,7 +26,7 @@ class CorePersistentMemory extends SapphireFrameworkService{
 
     private void loadPipelines(){
         // Just an example of how I will use this
-        File pipelineFile = new File(CoreUtilities.PIPELINES_TABLE);
+        File pipelineFile = new File(Utilities.PIPELINE_TABLE);
         for(String pipelineString: pipelineFile.list())
             pipelines.put("default",new Pipeline(pipelineString));
     }
