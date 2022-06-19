@@ -14,6 +14,6 @@ Pre-Alpha Build
 
 # Contributions
 * Financial contributions are always appreciated, and can help me move to making this my full time job. Check out the sponsor button in the repository if you are interested in helping to fund the project
-* Join in the community on [Reddit](www.reddit.com/r/SapphireFramework) or Matrix at #SapphireFramework:matrix.org
+* Join in the community on [Reddit](https://www.reddit.com/r/SapphireFramework) or Matrix at #SapphireFramework:matrix.org
 * Android, Machine Learning developers, and UI/UX developers would be greatly appreciated for the project (or consulting at a minimum). I will continue to move forward reguardless, but it will go a lot quicker with some domain specific expertise
 * Documentation help would be greatly appreciated. I generally have all of the information locked up in my head and I am working on documentation, but sometimes I miss what others would find helpful or need more information on. Feel free to ask questions on Reddit or Matrix (I'm pretty responsive) if you would like to help out
