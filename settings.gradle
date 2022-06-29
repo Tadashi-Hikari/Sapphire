@@ -1,8 +1,6 @@
-rootProject.name = "Athena"
-include ':Athena'
-include ':AthenaAlarmSkill'
-include ':AthenaWeatherSkill'
-include ':AthenaRepeatSkill'
-include ':TermuxBridge'
-include ':GoogleBridge'
-include ':Athena:AthenaTranscribeSkill'
+rootProject.name = "Sapphire"
+include ':Sapphire:guidebook'
+include ':Sapphire:framework'
+include ':Sapphire:personality'
+include ':Sapphire:core'
+include ':Sapphire:skills'

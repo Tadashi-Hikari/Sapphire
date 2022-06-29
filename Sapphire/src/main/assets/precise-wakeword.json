@@ -1,0 +1,6 @@
+{
+  "wrap_command": "python precise-wrapper.py",
+  "audio_frequency":16000.00,
+  "audio_processor_category": "processor_type_wake_word",
+  "notification_type": "partial"
+}

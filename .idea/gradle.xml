@@ -10,16 +10,14 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Athena" />
-            <option value="$PROJECT_DIR$/Athena/AthenaTranscribeSkill" />
-            <option value="$PROJECT_DIR$/AthenaAlarmSkill" />
-            <option value="$PROJECT_DIR$/AthenaRepeatSkill" />
-            <option value="$PROJECT_DIR$/AthenaWeatherSkill" />
-            <option value="$PROJECT_DIR$/GoogleBridge" />
-            <option value="$PROJECT_DIR$/TermuxBridge" />
+            <option value="$PROJECT_DIR$/Sapphire" />
+            <option value="$PROJECT_DIR$/Sapphire/core" />
+            <option value="$PROJECT_DIR$/Sapphire/framework" />
+            <option value="$PROJECT_DIR$/Sapphire/guidebook" />
+            <option value="$PROJECT_DIR$/Sapphire/personality" />
+            <option value="$PROJECT_DIR$/Sapphire/skills" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
