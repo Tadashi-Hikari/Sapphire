@@ -13,9 +13,9 @@
             <option value="$PROJECT_DIR$/Sapphire" />
             <option value="$PROJECT_DIR$/Sapphire/core" />
             <option value="$PROJECT_DIR$/Sapphire/framework" />
-            <option value="$PROJECT_DIR$/Sapphire/guidebook" />
             <option value="$PROJECT_DIR$/Sapphire/personality" />
             <option value="$PROJECT_DIR$/Sapphire/skills" />
+            <option value="$PROJECT_DIR$/Sapphire/spellbook" />
           </set>
         </option>
       </GradleProjectSettings>

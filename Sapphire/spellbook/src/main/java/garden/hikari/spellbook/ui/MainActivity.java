@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        registerReceiver(new UIBroadcastReceiver(), null);
+        //registerReceiver(new UIBroadcastReceiver(), null);
     }
 
     // This will be for a button, but whatever.
@@ -51,14 +51,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        registerReceiver(new UIBroadcastReceiver(), null);
+       //registerReceiver(new UIBroadcastReceiver(), null);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        unregisterReceiver(new UIBroadcastReceiver());
+        //unregisterReceiver(new UIBroadcastReceiver());
     }
 
     public void openDirectory(Uri uriToLoad) {

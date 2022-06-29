@@ -1,5 +1,5 @@
-rootProject.name = "Sapphire"
-include ':Sapphire:guidebook'
+rootProject.name = "Ecosystem"
+include ':Sapphire:spellbook'
 include ':Sapphire:framework'
 include ':Sapphire:personality'
 include ':Sapphire:core'
