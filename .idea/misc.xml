@@ -13,8 +13,14 @@
         <entry key="Athena/src/main/res/layout/core_activity.xml" value="0.2" />
         <entry key="Athena/src/main/res/layout/shiny_activity.xml" value="0.3890625" />
         <entry key="AthenaAlarmSkill/src/main/res/xml/actions.xml" value="0.2265625" />
+        <entry key="Sapphire/framework/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1395" />
         <entry key="Sapphire/personality/src/main/java/com/example/sapphire/spellbook/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2425" />
+        <entry key="Sapphire/spellbook/src/main/res/drawable/ic_launcher_background.xml" value="0.1395" />
+        <entry key="Sapphire/spellbook/src/main/res/layout/activity_main.xml" value="0.3890625" />
+        <entry key="Sapphire/spellbook/src/main/res/layout/layout.xml" value="0.2598958333333333" />
+        <entry key="Sapphire/spellbook/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.265" />
         <entry key="Sapphire/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2905" />
+        <entry key="Spellbook/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2855" />
       </map>
     </option>
   </component>

@@ -88,7 +88,7 @@ class CoreService: SapphireCoreService(), TextToSpeech.OnInitListener{
 		}
 
 		var notification = NotificationCompat.Builder(this, "SAF")
-			.setSmallIcon(R.drawable.ic_launcher_foreground)
+			.setSmallIcon(R.drawable.abc_vector_test)
 			.setContentTitle("Sapphire Assistant")
 			.setContentText("Thank you for trying out the Sapphire Framework")
 			.setOngoing(true)

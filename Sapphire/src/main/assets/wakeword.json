@@ -1,6 +1,0 @@
-{
-  "vosk_grammar": "[\"one zero zero zero one\",\"oh zero one two three four five six seven eight nine\", \"[unk]\"]",
-  "audio_frequency": 16000.00,
-  "audio_processor_category": "processor_type_wake_word",
-  "notification_type": "partial"
-}

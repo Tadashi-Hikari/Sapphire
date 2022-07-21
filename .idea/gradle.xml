@@ -4,18 +4,19 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="true" />
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="Embedded JDK" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Framework" />
             <option value="$PROJECT_DIR$/Sapphire" />
-            <option value="$PROJECT_DIR$/Sapphire/core" />
-            <option value="$PROJECT_DIR$/Sapphire/framework" />
             <option value="$PROJECT_DIR$/Sapphire/personality" />
             <option value="$PROJECT_DIR$/Sapphire/skills" />
-            <option value="$PROJECT_DIR$/Sapphire/spellbook" />
+            <option value="$PROJECT_DIR$/Spellbook" />
           </set>
         </option>
       </GradleProjectSettings>

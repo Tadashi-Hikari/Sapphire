@@ -7,6 +7,10 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
+    aaptOptions {
+        noCompress "json"
+    }
+
     defaultConfig {
         applicationId "garden.hikari.sapphire"
         minSdkVersion 25
@@ -40,10 +44,6 @@ android {
     }
 }
 
-ant.importBuild 'assets.xml'
-preBuild.dependsOn(list, checksum)
-clean.dependsOn(clean_assets)
-
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -60,7 +60,6 @@ dependencies {
     // This was added by me!
     implementation fileTree(dir: 'aars', include: ['*'])
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation files('libs/stanford-corenlp-4.1.0.jar')
     implementation 'org.tensorflow:tensorflow-lite:+'
     implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:+'
     implementation 'org.tensorflow:tensorflow-lite-support:+'

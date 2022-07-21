@@ -1,6 +1,6 @@
 rootProject.name = "Ecosystem"
-include ':Sapphire:spellbook'
-include ':Sapphire:framework'
+include ':Sapphire'
 include ':Sapphire:personality'
-include ':Sapphire:core'
 include ':Sapphire:skills'
+include ':Spellbook'
+include ':Framework'
