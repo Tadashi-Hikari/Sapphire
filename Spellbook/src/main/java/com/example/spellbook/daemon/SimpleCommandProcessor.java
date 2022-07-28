@@ -6,9 +6,6 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import accessibility.stt.SimpleAudioProcessor;
-import utility.ScriptLauncher;
-
 /**
  * The goal of SimpleCommandProcessor is to be the core routing service. It services
  * more than just the audio component, and it is meant to be simple for about 6-7 total actions
@@ -51,13 +48,15 @@ public class SimpleCommandProcessor extends Service {
      */
     public void launchProcessor(Intent intent){
         Intent audioProcessorIntent = intent;
-        audioProcessorIntent.setClass(this, SimpleAudioProcessor.class);
+        // Todo: swap placeholder with valid and cogent code
+        audioProcessorIntent.setClassName(this, "SimpleAudioProcessor.class");
         startService(audioProcessorIntent);
     }
 
     // This is the placeholder to see if I can wrap precise
     public void launchTermuxProcessor(Intent intent){
-        ScriptLauncher.runTermuxCommand(this,new String[]{"bash audio-pipe.sh"});
+        // Todo: swap placeholder with valid and cogent code
+        //ScriptLauncher.runTermuxCommand(this,new String[]{"bash audio-pipe.sh"});
     }
 
     public void toggleNotification(){}

@@ -35,7 +35,7 @@ public class CentralNotificationService extends Service {
                         PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, String.valueOf(ONGOING_NOTIFICATION_ID))
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setSmallIcon(.mipmap.ic_launcher_foreground)
                 .setContentTitle("Semper Liber")
                 .setContentText("A Republic, if you can keep it -Benjamin Franklin")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);

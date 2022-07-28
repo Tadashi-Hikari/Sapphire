@@ -2,11 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="institute.hikari.framework">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application>
         <service
-            android:name="accessibility.stt.SimpleAudioProcessor">
+            android:name="audio.SimpleAudioProcessor">
         </service>
+        <service
+            android:name="accessibility.MicrophoneToShellPipe"
+            android:exported="true"
+            android:foregroundServiceType="microphone"/>
     </application>
 </manifest>
